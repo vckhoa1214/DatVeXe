@@ -1,0 +1,259 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\NhaXe;
+use App\Models\TaiKhoan;
+use App\Models\ChuyenXe;
+use App\Models\VeDaDat;
+use App\Models\Review;
+use Illuminate\Support\Facades\Session;
+
+class QuanLyNhaXeController extends Controller
+{
+    public function show(Request $request)
+    {
+        $limit = 5;
+        $page = $request->query('page', 1);
+        $offset = ($page - 1) * $limit;
+
+        $nhaxes = NhaXe::orderBy('id', 'ASC')->offset($offset)->limit($limit)->get();
+        $count = NhaXe::count();
+
+        $infoAcc = TaiKhoan::find(Session::get('user')->id);
+
+        return view('admin.quanlynhaxe', [
+            'nhaxes' => $nhaxes,
+            'currentPage' => $page,
+            'totalPage' => ceil($count / $limit),
+            'infoAcc' => $infoAcc,
+        ]);
+    }
+
+    public function editNhaXe($id)
+    {
+        $nhaxe = NhaXe::findOrFail($id);
+
+        // Kiểm tra nếu phoneNo, address, và mainRoute là mảng
+        $phoneNos = is_array($nhaxe->phoneNo) ? $nhaxe->phoneNo : [];
+        $addresses = is_array($nhaxe->address) ? $nhaxe->address : [];
+        $mainRoutes = is_array($nhaxe->mainRoute) ? $nhaxe->mainRoute : [];
+
+        $phongve = [];
+        $maxCount = max(count($phoneNos), count($addresses), count($mainRoutes)); // Đảm bảo duyệt tất cả các phần tử
+        for ($i = 0; $i < $maxCount; $i++) {
+            $phongve[] = [
+                'phoneNo' => $phoneNos[$i] ?? '',
+                'address' => $addresses[$i] ?? '',
+                'mainRoute' => $mainRoutes[$i] ?? '',
+                'chontinh' => $this->getTinhThanh(),
+            ];
+        }
+
+        $infoAcc = TaiKhoan::find(Session::get('user')->id);
+
+        return view('admin.quanlychitietnhaxe', [
+            'phongves' => $phongve,
+            'infoAcc' => $infoAcc,
+            'chitietnhaxe' => $nhaxe,
+        ]);
+    }
+
+    public function updateNhaXe(Request $request, $id)
+    {
+        $nhaxe = NhaXe::findOrFail($id);
+        $files = $request->file('files', []);
+
+        // Gán ảnh nếu có upload
+        if ($request->checkavt === 'avt' && $request->checkjours === 'jour' && count($files) > 2) {
+            $img_avatar = 'images/nhaxe/' . $files[0]->getClientOriginalName();
+            $files[0]->move(public_path('images/nhaxe'), $files[0]->getClientOriginalName());
+
+            $img_jours = [];
+            for ($i = 1; $i < count($files); $i++) {
+                $filename = $files[$i]->getClientOriginalName();
+                $files[$i]->move(public_path('images/chuyenxe'), $filename);
+                $img_jours[] = 'images/chuyenxe/' . $filename;
+            }
+
+            $nhaxe->imageCarCom = $img_avatar;
+            $nhaxe->imageJours = $img_jours;
+        } elseif ($request->checkavt === 'avt' && count($files) > 0) {
+            $img_avatar = 'images/nhaxe/' . $files[0]->getClientOriginalName();
+            $files[0]->move(public_path('images/nhaxe'), $files[0]->getClientOriginalName());
+            $nhaxe->imageCarCom = $img_avatar;
+        } elseif ($request->checkjours === 'jour' && count($files) > 0) {
+            $img_jours = [];
+            foreach ($files as $file) {
+                $filename = $file->getClientOriginalName();
+                $file->move(public_path('images/chuyenxe'), $filename);
+                $img_jours[] = 'images/chuyenxe/' . $filename;
+            }
+            $nhaxe->imageJours = $img_jours;
+        }
+
+        $nhaxe->fill([
+            'name' => $request->name,
+            'phoneNo' => is_array($request->phoneNo) ? $request->phoneNo : [],
+            'address' => is_array($request->address) ? $request->address : [],
+            'mainRoute' => is_array($request->mainRoute) ? $request->mainRoute : [],
+            'description' => $request->description,
+            'policy' => $request->policy,
+        ]);
+
+        $nhaxe->save();
+
+        return redirect('/dashboard/quanlynhaxe');
+    }
+
+
+
+
+    public function deleteNhaXe(Request $request)
+    {
+        $id = $request->id;
+
+        // Tìm nhà xe theo ID
+        $nhaXe = NhaXe::findOrFail($id);
+
+        // Xóa các chuyến xe liên quan đến nhà xe
+        foreach ($nhaXe->chuyenXes as $chuyenXe) {
+            // Xóa vé đã đặt liên quan đến chuyến xe
+            $chuyenXe->veDaDats()->delete();
+
+            // Xóa chuyến xe
+            $chuyenXe->delete();
+        }
+
+        // Xóa các đánh giá liên quan đến nhà xe
+        $nhaXe->reviews()->delete();
+
+        // Cuối cùng, xóa nhà xe
+        $nhaXe->delete();
+
+        // Xóa vé không liên kết với chuyến xe (nếu có)
+        VeDaDat::whereNull('jourId')->delete();
+
+        return redirect()->back()->with('success', 'Nhà xe và các chuyến xe liên quan đã được xóa!');
+    }
+
+
+    public function themNhaXe()
+    {
+        $infoAcc = TaiKhoan::find(Session::get('user')->id);
+
+        return view('admin.themnhaxe', [
+            'tinhThanh' => $this->getTinhThanh(),
+            'infoAcc' => $infoAcc,
+        ]);
+    }
+
+    public function addNhaXe(Request $request)
+    {
+        // 1. Ảnh đại diện nhà xe
+        $img_avatar = null;
+        if ($request->hasFile('image')) {
+            $img_avatar = 'images/nhaxe/' . $request->file('image')->getClientOriginalName();
+            // Di chuyển ảnh vào thư mục public/images/nhaxe
+            $request->file('image')->move(public_path('images/nhaxe'), $request->file('image')->getClientOriginalName());
+        }
+
+        // 2. Ảnh chi tiết chuyến xe
+        $img_jours = [];
+        if ($request->hasFile('imageJours')) {
+            foreach ($request->file('imageJours') as $img) {
+                $filename = 'images/chuyenxe/' . $img->getClientOriginalName();
+                // Di chuyển ảnh vào thư mục public/images/chuyenxe
+                $img->move(public_path('images/chuyenxe'), $img->getClientOriginalName());
+                $img_jours[] = $filename;
+            }
+        }
+
+        // 3. Tạo nhà xe
+        NhaXe::create([
+            'name' => $request->name,
+            'phoneNo' => is_array($request->phoneNo) ? $request->phoneNo : [$request->phoneNo],
+            'address' => is_array($request->address) ? $request->address : [$request->address],
+            'mainRoute' => $request->mainRoute, // Không cần kiểm tra nữa
+            'description' => $request->description,
+            'policy' => $request->policy,
+            'imageCarCom' => $img_avatar,
+            'imageJours' => $img_jours,
+        ]);
+
+        return redirect('/dashboard/quanlynhaxe');
+    }
+
+
+
+    private function getTinhThanh()
+    {
+        return [
+            ['name' => 'Hà Nội'],
+            ['name' => 'Hồ Chí Minh'],
+            ['name' => 'Hải Phòng'],
+            ['name' => 'Đà Nẵng'],
+            ['name' => 'Cần Thơ'],
+            ['name' => 'An Giang'],
+            ['name' => 'Bà Rịa - Vũng Tàu'],
+            ['name' => 'Bắc Giang'],
+            ['name' => 'Bắc Kạn'],
+            ['name' => 'Bạc Liêu'],
+            ['name' => 'Bắc Ninh'],
+            ['name' => 'Bến Tre'],
+            ['name' => 'Bình Dương'],
+            ['name' => 'Bình Định'],
+            ['name' => 'Bình Phước'],
+            ['name' => 'Bình Thuận'],
+            ['name' => 'Cà Mau'],
+            ['name' => 'Cao Bằng'],
+            ['name' => 'Đắk Lắk'],
+            ['name' => 'Đắk Nông'],
+            ['name' => 'Điện Biên'],
+            ['name' => 'Đồng Nai'],
+            ['name' => 'Đồng Tháp'],
+            ['name' => 'Gia Lai'],
+            ['name' => 'Hà Giang'],
+            ['name' => 'Hà Nam'],
+            ['name' => 'Hà Tĩnh'],
+            ['name' => 'Hải Dương'],
+            ['name' => 'Hậu Giang'],
+            ['name' => 'Hòa Bình'],
+            ['name' => 'Hưng Yên'],
+            ['name' => 'Khánh Hòa'],
+            ['name' => 'Kiên Giang'],
+            ['name' => 'Kon Tum'],
+            ['name' => 'Lai Châu'],
+            ['name' => 'Lâm Đồng'],
+            ['name' => 'Lạng Sơn'],
+            ['name' => 'Lào Cai'],
+            ['name' => 'Long An'],
+            ['name' => 'Nam Định'],
+            ['name' => 'Nghệ An'],
+            ['name' => 'Ninh Bình'],
+            ['name' => 'Ninh Thuận'],
+            ['name' => 'Phú Thọ'],
+            ['name' => 'Quảng Bình'],
+            ['name' => 'Quảng Nam'],
+            ['name' => 'Quảng Ngãi'],
+            ['name' => 'Quảng Ninh'],
+            ['name' => 'Quảng Trị'],
+            ['name' => 'Sóc Trăng'],
+            ['name' => 'Sơn La'],
+            ['name' => 'Tây Ninh'],
+            ['name' => 'Thái Bình'],
+            ['name' => 'Thái Nguyên'],
+            ['name' => 'Thanh Hóa'],
+            ['name' => 'Thừa Thiên Huế'],
+            ['name' => 'Tiền Giang'],
+            ['name' => 'Trà Vinh'],
+            ['name' => 'Tuyên Quang'],
+            ['name' => 'Vĩnh Long'],
+            ['name' => 'Vĩnh Phúc'],
+            ['name' => 'Yên Bái'],
+            ['name' => 'Phú Yên'],
+        ];
+    }
+
+}
