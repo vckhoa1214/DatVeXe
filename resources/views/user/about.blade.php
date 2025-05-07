@@ -42,7 +42,6 @@
     </div>
 
     <div class="row justify-content-center team">
-
         @php
             $members = [
                 ['id' => '63134338', 'name' => 'Võ Chí Khoa', 'img' => 'vck.jpg'],

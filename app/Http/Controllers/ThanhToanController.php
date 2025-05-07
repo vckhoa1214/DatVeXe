@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\TaiKhoan;
 use App\Models\ChuyenXe;
 use App\Models\NhaXe;
 use App\Models\VeDaDat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TicketConfirmationMail;
 use Carbon\Carbon;
 use PayPal\Api\{Amount, Item, ItemList, Payer, Payment, PaymentExecution, RedirectUrls, Transaction};
 use PayPal\Rest\ApiContext;
@@ -155,12 +158,33 @@ class ThanhToanController extends Controller
                     'updatedAt' => \Carbon\Carbon::now(),
                 ]);
 
-                // Trừ ghế
+                // Tạo seatCodes cho vé
                 $chuyenxe = \App\Models\ChuyenXe::findOrFail($id);
-                $chuyenxe->decrement('numSeats', $data['quantity']);
+                $totalSeats = $chuyenxe->totalNumSeats;
+                $numSeatsRemaining = $chuyenxe->numSeats;
+
+                // Sinh mã ghế cho vé đã đặt
+                $seatCodes = [];
+                for ($i = 0; $i < $data['quantity']; $i++) {
+                    $seatCode = 'S' . str_pad($numSeatsRemaining, 2, '0', STR_PAD_LEFT);
+                    $seatCodes[] = $seatCode;
+                    $numSeatsRemaining--;
+                }
+
+                // Lưu seatCodes vào VeDaDats
+                $ve->seatCodes = json_encode($seatCodes);
+                $ve->save();
+
+                // Trừ ghế
+                $chuyenxe->update([
+                    'numSeats' => $numSeatsRemaining
+                ]);
 
                 // Xoá session
                 session()->forget('ticket_data');
+
+                // Gửi email thông tin vé cho người dùng
+                Mail::to($data['email'])->send(new TicketConfirmationMail($ve, $seatCodes,$chuyenxe));
 
                 return view('user.thanhcong', compact('ve'));
             }
@@ -170,6 +194,7 @@ class ThanhToanController extends Controller
 
         return redirect()->route('paypal.cancel', ['id' => $id]);
     }
+
 
 
     public function cancel($id)
@@ -195,13 +220,34 @@ class ThanhToanController extends Controller
             'updatedAt' => Carbon::now(),
         ]);
 
-        $chuyenxe = ChuyenXe::findOrFail($id);
+        // Tạo seatCodes cho vé
+        $chuyenxe = \App\Models\ChuyenXe::findOrFail($id);
+        $totalSeats = $chuyenxe->totalNumSeats;
+        $numSeatsRemaining = $chuyenxe->numSeats;
+
+        // Sinh mã ghế cho vé đã đặt
+        $seatCodes = [];
+        for ($i = 0; $i < $request->ticket; $i++) {
+            $seatCode = 'S' . str_pad($numSeatsRemaining, 2, '0', STR_PAD_LEFT);
+            $seatCodes[] = $seatCode;
+            $numSeatsRemaining--;
+        }
+
+        // Lưu seatCodes vào VeDaDats
+        $ve->seatCodes = json_encode($seatCodes);
+        $ve->save();
+
+        // Trừ ghế
         $chuyenxe->update([
-            'numSeats' => $chuyenxe->numSeats - $request->ticket
+            'numSeats' => $numSeatsRemaining
         ]);
+
+        // Gửi email thông tin vé cho người dùng
+        Mail::to($request->email)->send(new TicketConfirmationMail($ve, $seatCodes,$chuyenxe));
 
         return view('user.thanhcong');
     }
+
 
     public function handlePayment(Request $request, $id)
     {

@@ -21,6 +21,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 1,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
+                'seatCodes' => json_encode(["S50", "S49"]),
             ],
             [
                 'numSeats' => 1,
@@ -32,9 +33,10 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
+                'seatCodes' => json_encode(["S50"]),
             ],
             [
-                'numSeats' => 1,
+                'numSeats' => 3,
                 'statusTicket' => 'Đã thanh toán',
                 'email' => 'nvb03@gmail.com',
                 'phoneNum' => '0223456789',
@@ -43,6 +45,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
+                'seatCodes' => json_encode(["S50", "S49","S48"]),
             ],
             [
                 'numSeats' => 1,
@@ -54,6 +57,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
+                'seatCodes' => json_encode(["S50"]),
             ],
         ]);
     }

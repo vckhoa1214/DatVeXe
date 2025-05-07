@@ -1,65 +1,71 @@
+/* ======= Cấu trúc cơ bản ======= */
 body {
     font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
 }
 
 .container .loai-xe {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
 }
 
 .container .loai-xe p {
     padding: 0 2px;
+    margin: 0;
 }
 
 .bold-secondary {
     color: var(--color--secondary);
-
     font-weight: bold;
     font-size: 20px;
 }
 
-
+/* ======= Chi nhánh & Số điện thoại ======= */
 .chi-nhanh-details .sdt-container {
     display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
-.chi-nhanh-details .sdt-container>.bold-secondary {
+.chi-nhanh-details .sdt-container > .bold-secondary {
     line-height: 24px;
     padding-left: 3px;
 }
 
+/* ======= Phần đánh giá ======= */
 .container .review {
-    content: "";
     background-color: var(--color--tertiary);
-
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
 }
 
 .container .review .container .star-review .total {
     background-color: var(--color--secondary);
-
     color: white;
-
-    padding: 3px 3px;
+    padding: 3px 10px;
+    border-radius: 5px;
 }
 
-.container .review .container .star-review a:not(:first-child) {
+.container .review .container .star-review a {
     background-color: white;
-
     border: 1px solid var(--color--secondary);
-    padding: 2px;
-
     padding: 5px 10px;
-    margin: auto 10px;
-
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .container .review .container .star-review a:first-child {
-    border: 1px solid var(--color--secondary);
     background-color: var(--color--secondary);
+    color: white;
+}
 
-    padding: 5px 10px;
-    margin-right: 15px;
-    margin-left: 10px;
+.container .review .container .star-review a:hover {
+    background-color: #e2e1ec;
 }
 
 .comment-name {
@@ -68,78 +74,44 @@ body {
 
 .comment-avatar {
     display: flex;
-    flex-flow: row wrap;
     justify-content: center;
     align-items: center;
+    gap: 10px;
 }
 
 .comment-avatar img {
     width: 60px;
     height: 60px;
+    border-radius: 50%;
 }
 
 .comment-container {
     background-color: var(--color--tertiary);
-    border: 0px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
 .comment-container .comment {
     position: relative;
-    padding: 10px 10px 0 50px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-
+/* ======= Đánh giá sao ======= */
 .comment-star-container .comment-star {
     font-size: 15px;
-
     text-shadow: 1px 1px black;
     color: rgb(224, 174, 9);
-}
-
-.nha-xe-container {
-    display: flex;
-
-    flex-direction: column;
-    align-items: center;
-}
-
-.thumbnail {
-    margin-bottom: 10px;
-}
-
-#nhaxe-accordion {
-    margin-top: 10px;
-    border: 1px 1px solid black;
-}
-
-.review-box-button-group>.send-button {
-    background-color: var(--color--secondary);
-}
-
-.review-box-button-group>.send-button:hover {
-    background-color: #1c7ef7;
-    border-color: var(--color--secondary);
-}
-
-.review-box-button-group>.cancel-button:hover {
-    background-color: #e80202;
-    border-color: #ff2323;
-}
-
-.container .review .container .star-review .star-category:hover {
-    background-color: #e2e1ec;
 }
 
 div.stars {
     width: 270px;
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     flex-direction: row-reverse;
-}
-
-.name {
-    margin-bottom: 0;
 }
 
 input.star {
@@ -147,23 +119,22 @@ input.star {
 }
 
 label.star {
-    float: right;
     font-size: 16px;
     color: #444;
+    cursor: pointer;
     transition: all .2s;
 }
 
-input.star:checked~label.star:before {
-    content: '\f005';
+input.star:checked ~ label.star:before {
+    content: '\f005'; /* Full star */
     color: #FD4;
-    transition: all .25s;
 }
 
-input.star-5:checked~label.star:before {
+input.star-5:checked ~ label.star:before {
     color: #FE7;
 }
 
-input.star-1:checked~label.star:before {
+input.star-1:checked ~ label.star:before {
     color: rgb(240, 238, 98);
 }
 
@@ -172,6 +143,163 @@ label.star:hover {
 }
 
 label.star:before {
-    content: '\f006';
+    content: '\f006'; /* Empty star */
     font-family: FontAwesome;
+}
+
+/* ======= Nhà xe tổng thể ======= */
+.nha-xe-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.thumbnail {
+    margin-bottom: 20px;
+    border-radius: 12px;
+}
+
+#nhaxe-accordion {
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.review-box-button-group > .send-button {
+    background-color: var(--color--secondary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.review-box-button-group > .send-button:hover {
+    background-color: #1c7ef7;
+    border-color: var(--color--secondary);
+}
+
+.review-box-button-group > .cancel-button:hover {
+    background-color: #e80202;
+    border-color: #ff2323;
+    color: white;
+}
+
+/* ======= Accordion ======= */
+.accordion-button {
+    background-color: var(--color--quaternary);
+    color: #fff;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: none;
+}
+
+.accordion-button:hover {
+    background-color: #444;
+}
+
+.accordion-body {
+    padding: 15px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-header {
+    background-color: var(--color--quaternary);
+}
+
+/* ======= Pagination ======= */
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-item.active .page-link {
+    background-color: var(--color--secondary);
+    color: white;
+}
+
+.page-link {
+    color: var(--color--secondary);
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+}
+
+.page-item:hover .page-link {
+    background-color: #e2e1ec;
+}
+
+/* ======= Thêm các hiệu ứng hover và focus ======= */
+button:focus,
+a:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+/* ========== Review Section ========== */
+#review-section {
+    padding: 40px 0;
+}
+
+#review-section h2 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.review-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-left: 5px solid #007BFF;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+    padding: 20px 25px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.review-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.review-card h5 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.review-card .review-stars {
+    color: #FFD700;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.review-card p {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Pagination style */
+.pagination .page-link {
+    color: #007BFF;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    color: #fff;
+}
+
+.pagination .page-link:hover {
+    background-color: #e9ecef;
 }
