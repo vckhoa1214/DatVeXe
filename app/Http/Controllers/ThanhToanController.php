@@ -245,7 +245,11 @@ class ThanhToanController extends Controller
         // Gửi email thông tin vé cho người dùng
         Mail::to($request->email)->send(new TicketConfirmationMail($ve, $seatCodes,$chuyenxe));
 
-        return view('user.thanhcong');
+        return view('user.thanhcong', [
+            've' => $ve,
+            'book' => true
+        ]);
+
     }
 
 
