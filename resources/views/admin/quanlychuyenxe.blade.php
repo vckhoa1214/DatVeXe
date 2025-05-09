@@ -226,30 +226,47 @@
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlyve">
-                        <i class="fa-solid fa-ticket menu-icon"></i>
-                        <span class="menu-title">Quản lý vé đặt</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlynhaxe">
-                        <i class="fa-solid fa-car menu-icon"></i>
-                        <span class="menu-title">Quản lý nhà xe</span>
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/dashboard/quanlychuyenxe">
-                        <i class="fa-solid fa-bus menu-icon"></i>
-                        <span class="menu-title">Quản lý chuyến xe</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlytaikhoan">
-                        <i class="fa-solid fa-users menu-icon"></i>
-                        <span class="menu-title">Quản lý tài khoản</span>
-                    </a>
-                </li>
+                @if($infoAcc->isAdmin)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlynhaxe">
+                            <i class="fa-solid fa-car menu-icon"></i>
+                            <span class="menu-title">Quản lý nhà xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlytaikhoan">
+                            <i class="fa-solid fa-users menu-icon"></i>
+                            <span class="menu-title">Quản lý tài khoản</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- Menu của nhà xe -->
+                @if($infoAcc->isCarCompany)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </nav>
         <!-- partial -->

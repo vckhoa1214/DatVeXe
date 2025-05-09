@@ -24,50 +24,58 @@ class DashboardController extends Controller
 
         if ($user) {
             if (password_verify($password, $user->password)) {
-                if ($user->isVerified && $user->isAdmin) {
-                    // Lưu session
-                    Session::put('user', $user);
-                    Session::put('admin_logged_in', true);
-
-                    // Redirect về URL trước đó hoặc về dashboard
-                    $redirectUrl = $request->session()->pull('returnURL', route('dashboard'));
-                    return redirect()->to($redirectUrl);
-                } elseif (!$user->isVerified) {
+                if ($user->isVerified) {
+                    // Kiểm tra nếu là admin hoặc nhà xe
+                    if ($user->isAdmin) {
+                        // Lưu session cho admin
+                        Session::put('user', $user);
+                        Session::put('admin_logged_in', true);
+                        return redirect()->route('dashboard');
+                    } elseif ($user->isCarCompany) {
+                        // Lưu session cho nhà xe
+                        Session::put('user', $user);
+                        Session::put('car_company_logged_in', true);
+                        return redirect()->route('dashboard');
+                    } else {
+                        return back()->with([
+                            'message' => 'Tài khoản của bạn không phải là admin hoặc nhà xe!',
+                            'type' => 'alert-danger',
+                        ]);
+                    }
+                } else {
                     return back()->with([
                         'message' => 'Tài khoản của bạn chưa được xác thực trong hệ thống, vui lòng xác thực!',
-                        'type' => 'alert-danger',
-                    ]);
-                } elseif (!$user->isAdmin) {
-                    return back()->with([
-                        'message' => 'Tài khoản của bạn không phải là admin!!!',
                         'type' => 'alert-danger',
                     ]);
                 }
             } else {
                 return back()->with([
-                    'message' => 'Mật khẩu nhập không đúng!!!',
+                    'message' => 'Mật khẩu không đúng!',
                     'type' => 'alert-danger',
                 ]);
             }
         }
 
         return back()->with([
-            'message' => 'Email không tồn tại!!!',
+            'message' => 'Email không tồn tại!',
             'type' => 'alert-danger',
         ]);
     }
 
 
+
     public function isAdminLoggedIn(Request $request)
     {
-        return Session::has('user') && Session::get('user')['isAdmin'] ?? false;
+        return Session::has('user') && (Session::get('user')['isAdmin'] || Session::get('user')['isCarCompany']);
     }
+
 
     public function logoutAdmin()
     {
-        Session::flush(); // Xoá toàn bộ session
+        Session::flush(); // Xóa toàn bộ session
         return redirect('/dashboard/login');
     }
+
 
     public function show(Request $request)
     {
@@ -79,12 +87,39 @@ class DashboardController extends Controller
 
         $accId = Session::get('user.id');
         $infoAcc = TaiKhoan::find($accId);
+
+        // Kiểm tra nếu là nhà xe (isCarCompany = 1)
+        if ($infoAcc->isCarCompany) {
+            // Lấy nhà xe liên kết với tài khoản (managerId)
+            $nhaxe = NhaXe::where('managerId', $infoAcc->id)->first();
+
+            // Lọc chuyến xe và vé đã đặt của nhà xe đó (sử dụng carId thay cho nhaXeId)
+            $chuyenxe = ChuyenXe::where('carId', $nhaxe->id)->get();  // Dùng 'carId' thay cho 'nhaXeId'
+            $vedadat = VeDaDat::whereIn('jourId', $chuyenxe->pluck('id'))->get();
+
+            // Tính tổng doanh thu của nhà xe này
+            $tongDoanhThu = VeDaDat::where('statusTicket', 'Đã thanh toán')
+                ->whereIn('jourId', $chuyenxe->pluck('id'))
+                ->with('chuyenXe')
+                ->get()
+                ->sum(function($ticket) {
+                    return $ticket->chuyenXe->price * $ticket->numSeats;
+                });
+
+            // Lấy tổng số vé đã bán của nhà xe
+            $tongVe = $vedadat->count();
+
+            // Trả về thông tin nhà xe đó
+            return view('admin.dashboard', compact('infoAcc', 'chuyenxe', 'nhaxe', 'vedadat', 'tongDoanhThu', 'tongVe'));
+        }
+
+        // Nếu là admin, hiển thị tất cả dữ liệu
         $taikhoan = TaiKhoan::all();
         $chuyenxe = ChuyenXe::all();
         $nhaxe = NhaXe::all();
         $vedadat = VeDaDat::all();
 
-        // 👉 Thêm dòng này để tính tổng doanh thu
+        // Tính tổng doanh thu cho tất cả
         $tongDoanhThu = VeDaDat::where('statusTicket', 'Đã thanh toán')
             ->with('chuyenXe')
             ->get()
@@ -103,6 +138,9 @@ class DashboardController extends Controller
         $accId = Session::get('user.id');
         $infoAcc = TaiKhoan::find($accId);
 
+        // Kiểm tra xem tài khoản có phải là nhà xe hay không
+        $isCarCompany = $infoAcc->isCarCompany;
+
         // Lấy trạng thái vé từ query string, mặc định là 'Vừa đặt'
         $statusTicket = $request->query('status', 'Vừa đặt');
 
@@ -111,13 +149,57 @@ class DashboardController extends Controller
         $currentPage = (int) $request->query('page', 1);
         $offset = ($currentPage - 1) * $limit;
 
-        // Tổng số vé theo trạng thái
-        $total = VeDaDat::where('statusTicket', $statusTicket)->count();
+        // Lọc vé theo trạng thái
+        $query = VeDaDat::where('statusTicket', $statusTicket);
+
+        // Nếu tài khoản là nhà xe, chỉ lấy vé thuộc chuyến xe của nhà xe đó
+        if ($isCarCompany) {
+            // Tìm nhà xe mà tài khoản này quản lý
+            $nhaXe = NhaXe::where('managerId', $accId)->first();
+
+            if (!$nhaXe) {
+                // Nếu không có nhà xe nào ứng với accId, trả về rỗng
+                $ve = collect();
+                return view('admin.quanlyve', [
+                    'infoAcc' => $infoAcc,
+                    'statusVuaDat' => $statusTicket == 'Vừa đặt',
+                    'statusThanhToan' => $statusTicket == 'Đã thanh toán',
+                    'statusDaHuy' => $statusTicket == 'Đã hủy',
+                    've' => $ve,
+                    'statusTicket' => $statusTicket,
+                    'currentPage' => $currentPage,
+                    'totalPage' => 0
+                ]);
+            }
+
+            // Lấy các chuyến xe thuộc nhà xe đó
+            $jourIds = ChuyenXe::where('carId', $nhaXe->id)->pluck('id');
+
+            // Nếu không có chuyến xe nào, trả về rỗng
+            if ($jourIds->isEmpty()) {
+                $ve = collect();
+                return view('admin.quanlyve', [
+                    'infoAcc' => $infoAcc,
+                    'statusVuaDat' => $statusTicket == 'Vừa đặt',
+                    'statusThanhToan' => $statusTicket == 'Đã thanh toán',
+                    'statusDaHuy' => $statusTicket == 'Đã hủy',
+                    've' => $ve,
+                    'statusTicket' => $statusTicket,
+                    'currentPage' => $currentPage,
+                    'totalPage' => 0
+                ]);
+            }
+
+            // Lọc vé theo danh sách chuyến xe của nhà xe này
+            $query->whereIn('jourId', $jourIds);
+        }
+
+        // Tổng số vé theo điều kiện
+        $total = $query->count();
         $totalPage = ceil($total / $limit);
 
-        // Lấy vé có phân trang
-        $ve = VeDaDat::where('statusTicket', $statusTicket)
-            ->with('chuyenXe')
+        // Lấy vé phân trang
+        $ve = $query->with('chuyenXe')
             ->with('taiKhoan')
             ->orderBy('id', 'DESC')
             ->offset($offset)
@@ -136,6 +218,7 @@ class DashboardController extends Controller
             'totalPage' => $totalPage
         ]);
     }
+
 
 
 
@@ -182,12 +265,29 @@ class DashboardController extends Controller
         $page = (int) $request->query('page', 1);
         $offset = ($page - 1) * $limit;
 
+        // Lấy thông tin tài khoản đăng nhập
         $accId = Session::get('user.id');
         $infoAcc = TaiKhoan::find($accId);
 
-        $query = ChuyenXe::with(['nhaxe', 'loaixe']);
+        // Kiểm tra nếu tài khoản là admin
+        if ($infoAcc->isAdmin) {
+            // Admin có thể xem tất cả chuyến xe
+            $query = ChuyenXe::with(['nhaxe', 'loaixe']);
+        } else if ($infoAcc->isCarCompany) {
+            // Nếu là nhà xe, chỉ xem chuyến xe của nhà xe đó
+            $carId = $infoAcc->nhaXe->id;
+            $query = ChuyenXe::with(['nhaxe', 'loaixe'])
+                ->where('carId', $carId); // Lọc chuyến xe theo carId
+        }
+
+        // Thực hiện phân trang
         $total = $query->count();
-        $quanly_chuyenxe = $query->orderBy('id', 'ASC')->offset($offset)->limit($limit)->get();
+        $quanly_chuyenxe = $query->orderBy('id', 'ASC')
+            ->offset($offset)
+            ->limit($limit)
+            ->get();
+
+        // Tính số trang
         $totalPage = ceil($total / $limit);
 
         return view('admin.quanlychuyenxe', [
@@ -197,8 +297,6 @@ class DashboardController extends Controller
             'totalPage' => $totalPage,
         ]);
     }
-
-
 
     public function featureChuyenXe(Request $request)
     {

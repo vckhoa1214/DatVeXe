@@ -31,6 +31,7 @@ class NhaXeSeeder extends Seeder
                     "/images/chuyenxe/ha-my-2.jpg",
                     "/images/chuyenxe/ha-my-3.jpg"
                 ]),
+                'managerId' => 7,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -51,6 +52,7 @@ class NhaXeSeeder extends Seeder
                     "/images/chuyenxe/minh-phuong-2.jpg",
                     "/images/chuyenxe/minh-phuong-3.jpg"
                 ]),
+                'managerId' => 8,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -71,6 +73,7 @@ class NhaXeSeeder extends Seeder
                     "/images/chuyenxe/phat-thuy-2.jpg",
                     "/images/chuyenxe/phat-thuy-3.jpg"
                 ]),
+                'managerId' => 9,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -91,6 +94,7 @@ class NhaXeSeeder extends Seeder
                     "/images/chuyenxe/hoang-anh-2.jpg",
                     "/images/chuyenxe/hoang-anh-3.jpg"
                 ]),
+                'managerId' => 10,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -111,6 +115,7 @@ class NhaXeSeeder extends Seeder
                     "/images/chuyenxe/tien-dat-2.jpg",
                     "/images/chuyenxe/tien-dat-3.jpg"
                 ]),
+                'managerId' => 11,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ]

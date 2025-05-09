@@ -339,9 +339,9 @@
                                     <p class="card-description font-weight-bold"><i class="fa-solid fa-user-gear"></i> Quyền & Trạng thái</p>
 
                                     <div class="row justify-content-center">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group row justify-content-center">
-                                                <div class="col-sm-9">
+                                                <div class="col-sm-10">
                                                     <label><i class="fa-solid fa-user-shield"></i> Quyền</label>
                                                     <select class="form-control" name="isAdmin" required>
                                                         <option value="" hidden>Chọn quyền</option>
@@ -352,14 +352,27 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group row justify-content-center">
-                                                <div class="col-sm-9">
+                                                <div class="col-sm-10">
                                                     <label><i class="fa-solid fa-check-circle"></i> Xác minh</label>
                                                     <select class="form-control" name="isVerified" required>
                                                         <option value="" hidden>Trạng thái xác minh</option>
                                                         <option value="1">Đã xác minh</option>
                                                         <option value="0">Chưa xác minh</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group row justify-content-center">
+                                                <div class="col-sm-10">
+                                                    <label><i class="fa-solid fa-bus"></i> Loại tài khoản</label>
+                                                    <select class="form-control" name="isCarCompany" required>
+                                                        <option value="" hidden>Loại tài khoản</option>
+                                                        <option value="1">Tài khoản nhà xe</option>
+                                                        <option value="0">Tài khoản khách hàng</option>
                                                     </select>
                                                 </div>
                                             </div>

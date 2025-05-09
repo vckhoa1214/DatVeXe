@@ -272,13 +272,24 @@
                                         @csrf
                                         <h1 class="text-center fw-bold mb-5">Thêm nhà xe </h1>
 
-                                        {{-- Tên nhà xe --}}
+                                        {{-- Tên nhà xe và tài khoản quản lý --}}
                                         <div class="form-group">
-                                            <h5 class="fw-semibold">Tên nhà xe</h5>
+                                            <h5 class="fw-semibold">Tên nhà xe và Tài khoản quản lý</h5>
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <input type="text" class="form-control" name="name"
-                                                           placeholder="Nhập tên nhà xe" required>
+                                                    <label for="name">Tên nhà xe</label>
+                                                    <input type="text" class="form-control" name="name" placeholder="Nhập tên nhà xe" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="managerId">Tài khoản nhà xe</label>
+                                                    <select class="form-select form-control" name="managerId" required>
+                                                        <option value="">Chọn tài khoản</option>
+                                                        @foreach ($carCompanyAccounts as $account)
+                                                            <option value="{{ $account->id }}">
+                                                                {{ $account->fullName }} - {{ $account->email }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>

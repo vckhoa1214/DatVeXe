@@ -72,6 +72,7 @@ class QuanLyTaiKhoanController extends Controller
             'imageAccount' => $imageAccount,
             'isAdmin' => $request->isAdmin,
             'isVerified' => $request->isVerified,
+            'isCarCompany' => $request->isCarCompany,
             'password' => $password,
         ]);
 
@@ -135,6 +136,7 @@ class QuanLyTaiKhoanController extends Controller
             'imageAccount' => $imageAccount, // Sử dụng giá trị ảnh (mặc định hoặc upload)
             'isAdmin' => $request->isAdmin,
             'isVerified' => $request->isVerified,
+            'isCarCompany' => $request->isCarCompany,
             'createdAt' => now(),
             'updatedAt' => now(),
         ]);

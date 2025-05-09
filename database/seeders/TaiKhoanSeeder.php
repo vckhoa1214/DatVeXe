@@ -25,6 +25,7 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => false,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -38,6 +39,7 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => false,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -51,6 +53,7 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => true,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -64,6 +67,7 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => false,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -77,6 +81,7 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => false,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
             ],
@@ -90,9 +95,83 @@ class TaiKhoanSeeder extends Seeder
                 'imageAccount' => '/images/default.jpg',
                 'isAdmin' => false,
                 'isVerified' => true,
+                'isCarCompany' => false,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now()
-            ]
+            ],
+            [
+                'email' => 'hamy.manager@gmail.com',
+                'password' => Hash::make('123456'),
+                'phoneNum' => '0909123456',
+                'fullName' => 'Nhà Xe Hà My',
+                'dob' => '1990-05-20',
+                'isMale' => false,
+                'imageAccount' => '/images/nhaxe/nxHaMy.png',
+                'isAdmin' => false,
+                'isVerified' => true,
+                'isCarCompany' => true,
+                'createdAt' => Carbon::now(),
+                'updatedAt' => Carbon::now()
+            ],
+            [
+                'email' => 'minhphuong.manager@gmail.com',
+                'password' => Hash::make('123456'),
+                'phoneNum' => '0909123456',
+                'fullName' => 'Nhà Xe Minh phương',
+                'dob' => '1990-05-20',
+                'isMale' => false,
+                'imageAccount' => '/images/nhaxe/nxMinhPhuong.png',
+                'isAdmin' => false,
+                'isVerified' => true,
+                'isCarCompany' => true,
+                'createdAt' => Carbon::now(),
+                'updatedAt' => Carbon::now()
+            ],
+            [
+                'email' => 'phatthuy.manager@gmail.com',
+                'password' => Hash::make('123456'),
+                'phoneNum' => '0909123456',
+                'fullName' => 'Nhà Xe Phát Thủy',
+                'dob' => '1990-05-20',
+                'isMale' => false,
+                'imageAccount' => '/images/nhaxe/nxPhatThuy.png',
+                'isAdmin' => false,
+                'isVerified' => true,
+                'isCarCompany' => true,
+                'createdAt' => Carbon::now(),
+                'updatedAt' => Carbon::now()
+            ],
+            [
+                'email' => 'hoanganh.manager@gmail.com',
+                'password' => Hash::make('123456'),
+                'phoneNum' => '0909123456',
+                'fullName' => 'Nhà Xe Hoàng Anh',
+                'dob' => '1990-05-20',
+                'isMale' => false,
+                'imageAccount' => '/images/nhaxe/nxHoangAnh.png',
+                'isAdmin' => false,
+                'isVerified' => true,
+                'isCarCompany' => true,
+                'createdAt' => Carbon::now(),
+                'updatedAt' => Carbon::now()
+            ],
+            [
+                'email' => 'tiendat.manager@gmail.com',
+                'password' => Hash::make('123456'),
+                'phoneNum' => '0909123456',
+                'fullName' => 'Nhà Xe Tiến Đạt',
+                'dob' => '1990-05-20',
+                'isMale' => false,
+                'imageAccount' => '/images/nhaxe/nxTienDatThanh.png',
+                'isAdmin' => false,
+                'isVerified' => true,
+                'isCarCompany' => true,
+                'createdAt' => Carbon::now(),
+                'updatedAt' => Carbon::now()
+            ],
+
+
+
         ];
 
         // Thêm dữ liệu vào bảng TaiKhoans

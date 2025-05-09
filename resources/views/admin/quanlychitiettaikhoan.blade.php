@@ -322,6 +322,14 @@
                                                 </select>
                                             </div>
 
+                                            <div class="form-group col-md-6">
+                                                <h5 class="fw-semibold">Loại tài khoản</h5>
+                                                <select name="isCarCompany" class="form-select">
+                                                    <option value="1" {{ $taiKhoan->isCarCompany == 1 ? 'selected' : '' }}>Nhà xe</option>
+                                                    <option value="0" {{ $taiKhoan->isCarCompany == 0 ? 'selected' : '' }}>Khách hàng</option>
+                                                </select>
+                                            </div>
+
                                             {{-- Trạng thái xác thực --}}
                                             <div class="form-group col-md-6">
                                                 <h5 class="fw-semibold">Trạng thái xác thực</h5>

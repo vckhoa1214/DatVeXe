@@ -22,9 +22,9 @@ class VeDaDat extends Model
     {
         return $this->belongsTo(ChuyenXe::class, 'jourId', 'id');
     }
+
     public function review()
     {
         return $this->hasOne(Review::class, 've_id');
     }
-
 }

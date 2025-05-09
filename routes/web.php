@@ -105,14 +105,19 @@ Route::middleware(['auth'])->group(function () {
 
 //Nhóm route cho quản lý dashboard
 Route::prefix('dashboard')->group(function () {
+    // Trang đăng nhập
     Route::get('/login', function () {
         return view('admin.loginAdmin');
     })->name('dashboard.login');
 
+    // Xử lý đăng nhập
     Route::post('/login', [DashboardController::class, 'loginAdmin']);
 
+    // Nhóm route cho các trang yêu cầu người dùng đã đăng nhập
     Route::middleware('check.admin.login')->group(function () {
         Route::get('/', [DashboardController::class, 'show'])->name('dashboard');
+
+        // Đăng xuất
         Route::post('/logout', [DashboardController::class, 'logoutAdmin'])->name('dashboard.logout');
 
         // Quản lý vé
@@ -148,3 +153,4 @@ Route::prefix('dashboard')->group(function () {
         Route::post('/quanlytaikhoan/them', [QuanLyTaiKhoanController::class, 'addTaiKhoan'])->name('dashboard.themtaikhoan.submit');
     });
 });
+

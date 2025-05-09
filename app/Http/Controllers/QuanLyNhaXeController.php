@@ -35,13 +35,12 @@ class QuanLyNhaXeController extends Controller
     {
         $nhaxe = NhaXe::findOrFail($id);
 
-        // Kiểm tra nếu phoneNo, address, và mainRoute là mảng
         $phoneNos = is_array($nhaxe->phoneNo) ? $nhaxe->phoneNo : [];
         $addresses = is_array($nhaxe->address) ? $nhaxe->address : [];
         $mainRoutes = is_array($nhaxe->mainRoute) ? $nhaxe->mainRoute : [];
 
         $phongve = [];
-        $maxCount = max(count($phoneNos), count($addresses), count($mainRoutes)); // Đảm bảo duyệt tất cả các phần tử
+        $maxCount = max(count($phoneNos), count($addresses), count($mainRoutes));
         for ($i = 0; $i < $maxCount; $i++) {
             $phongve[] = [
                 'phoneNo' => $phoneNos[$i] ?? '',
@@ -53,19 +52,23 @@ class QuanLyNhaXeController extends Controller
 
         $infoAcc = TaiKhoan::find(Session::get('user')->id);
 
+        // Lấy danh sách tài khoản có isCarCompany = 1
+        $carCompanyAccounts = TaiKhoan::where('isCarCompany', 1)->get();
+
         return view('admin.quanlychitietnhaxe', [
             'phongves' => $phongve,
             'infoAcc' => $infoAcc,
             'chitietnhaxe' => $nhaxe,
+            'carCompanyAccounts' => $carCompanyAccounts,
         ]);
     }
+
 
     public function updateNhaXe(Request $request, $id)
     {
         $nhaxe = NhaXe::findOrFail($id);
         $files = $request->file('files', []);
 
-        // Gán ảnh nếu có upload
         if ($request->checkavt === 'avt' && $request->checkjours === 'jour' && count($files) > 2) {
             $img_avatar = 'images/nhaxe/' . $files[0]->getClientOriginalName();
             $files[0]->move(public_path('images/nhaxe'), $files[0]->getClientOriginalName());
@@ -100,15 +103,13 @@ class QuanLyNhaXeController extends Controller
             'mainRoute' => is_array($request->mainRoute) ? $request->mainRoute : [],
             'description' => $request->description,
             'policy' => $request->policy,
+            'managerId' => $request->managerId,
         ]);
 
         $nhaxe->save();
 
         return redirect('/dashboard/quanlynhaxe');
     }
-
-
-
 
     public function deleteNhaXe(Request $request)
     {
@@ -143,47 +144,49 @@ class QuanLyNhaXeController extends Controller
     {
         $infoAcc = TaiKhoan::find(Session::get('user')->id);
 
+        // Lấy danh sách tài khoản có isCarCompany = 1
+        $carCompanyAccounts = TaiKhoan::where('isCarCompany', 1)->get();
+
         return view('admin.themnhaxe', [
             'tinhThanh' => $this->getTinhThanh(),
             'infoAcc' => $infoAcc,
+            'carCompanyAccounts' => $carCompanyAccounts,
         ]);
     }
 
+
     public function addNhaXe(Request $request)
     {
-        // 1. Ảnh đại diện nhà xe
         $img_avatar = null;
         if ($request->hasFile('image')) {
             $img_avatar = 'images/nhaxe/' . $request->file('image')->getClientOriginalName();
-            // Di chuyển ảnh vào thư mục public/images/nhaxe
             $request->file('image')->move(public_path('images/nhaxe'), $request->file('image')->getClientOriginalName());
         }
 
-        // 2. Ảnh chi tiết chuyến xe
         $img_jours = [];
         if ($request->hasFile('imageJours')) {
             foreach ($request->file('imageJours') as $img) {
                 $filename = 'images/chuyenxe/' . $img->getClientOriginalName();
-                // Di chuyển ảnh vào thư mục public/images/chuyenxe
                 $img->move(public_path('images/chuyenxe'), $img->getClientOriginalName());
                 $img_jours[] = $filename;
             }
         }
 
-        // 3. Tạo nhà xe
         NhaXe::create([
             'name' => $request->name,
             'phoneNo' => is_array($request->phoneNo) ? $request->phoneNo : [$request->phoneNo],
             'address' => is_array($request->address) ? $request->address : [$request->address],
-            'mainRoute' => $request->mainRoute, // Không cần kiểm tra nữa
+            'mainRoute' => $request->mainRoute,
             'description' => $request->description,
             'policy' => $request->policy,
             'imageCarCom' => $img_avatar,
             'imageJours' => $img_jours,
+            'managerId' => $request->managerId,
         ]);
 
         return redirect('/dashboard/quanlynhaxe');
     }
+
 
 
 

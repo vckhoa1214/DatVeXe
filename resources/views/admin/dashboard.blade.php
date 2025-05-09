@@ -208,39 +208,59 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
+                <!-- Các mục menu chung -->
                 <li class="nav-item">
                     <a class="nav-link" href="/dashboard">
                         <i class="icon-grid menu-icon"></i>
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlyve">
-                        <i class="fa-solid fa-ticket menu-icon"></i>
-                        <span class="menu-title">Quản lý vé đặt</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlynhaxe">
-                        <i class="fa-solid fa-car menu-icon"></i>
-                        <span class="menu-title">Quản lý nhà xe</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlychuyenxe">
-                        <i class="fa-solid fa-bus menu-icon"></i>
-                        <span class="menu-title">Quản lý chuyến xe</span>
-                    </a>
-                </li>
+                <!-- Menu của admin -->
+                @if($infoAcc->isAdmin)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlynhaxe">
+                            <i class="fa-solid fa-car menu-icon"></i>
+                            <span class="menu-title">Quản lý nhà xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlytaikhoan">
+                            <i class="fa-solid fa-users menu-icon"></i>
+                            <span class="menu-title">Quản lý tài khoản</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- Menu của nhà xe -->
+                @if($infoAcc->isCarCompany)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlytaikhoan">
-                        <i class="fa-solid fa-users menu-icon"></i>
-                        <span class="menu-title">Quản lý tài khoản</span>
-                    </a>
-                </li>
+                @endif
             </ul>
         </nav>
+
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">
@@ -257,61 +277,86 @@
                     <!-- Bên phải: Thống kê -->
                     <div class="col-lg-6">
                         <div class="row">
-                            <!-- Tổng vé -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card card-tale">
-                                    <div class="card-body">
-                                        <p class="mb-4">Tổng số lượng vé</p>
-                                        <p class="fs-30">{{ isset($vedadat) ? count($vedadat) : 0 }}</p>
+                            <!-- Thống kê cho nhà xe và admin -->
+                            @if($infoAcc->isAdmin)
+                                <!-- Tổng vé -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-tale">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số lượng vé</p>
+                                            <p class="fs-30">{{ isset($vedadat) ? count($vedadat) : 0 }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Tổng chuyến xe -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card card-dark-blue">
-                                    <div class="card-body">
-                                        <p class="mb-4">Tổng số lượng chuyến xe</p>
-                                        <p class="fs-30">{{ isset($chuyenxe) ? count($chuyenxe) : 0 }}</p>
+                                <!-- Tổng chuyến xe -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-dark-blue">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số lượng chuyến xe</p>
+                                            <p class="fs-30">{{ isset($chuyenxe) ? count($chuyenxe) : 0 }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Tổng nhà xe -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card card-light-blue">
-                                    <div class="card-body">
-                                        <p class="mb-4">Tổng số lượng nhà xe</p>
-                                        <p class="fs-30">{{ isset($nhaxe) ? count($nhaxe) : 0 }}</p>
+                                <!-- Tổng nhà xe -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-light-blue">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số lượng nhà xe</p>
+                                            <p class="fs-30">{{ isset($nhaxe) ? count($nhaxe) : 0 }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Tổng tài khoản -->
-                            <div class="col-md-6 mb-4">
-                                <div class="card card-light-green">
-                                    <div class="card-body">
-                                        <p class="mb-4">Tổng số lượng tài khoản</p>
-                                        <p class="fs-30">{{ isset($taikhoan) ? count($taikhoan) : 0 }}</p>
+                                <!-- Tổng tài khoản -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-light-green">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số lượng tài khoản</p>
+                                            <p class="fs-30">{{ isset($taikhoan) ? count($taikhoan) : 0 }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
 
-                            <!-- Tổng doanh thu -->
-                            <div class="col-12">
-                                <div class="card card-tale">
-                                    <div class="card-body">
-                                        <p class="mb-4">Tổng doanh thu</p>
-                                        <p class="fs-30">{{ isset($tongDoanhThu) ? number_format($tongDoanhThu, 0, ',', '.') : '0' }} đ</p>
+                            @if($infoAcc->isCarCompany)
+                                <!-- Tổng doanh thu cho nhà xe -->
+                                <div class="col-12 mb-4">
+                                    <div class="card card-light-green">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng doanh thu</p>
+                                            <p class="fs-30">{{ isset($tongDoanhThu) ? number_format($tongDoanhThu, 0, ',', '.') : '0' }} đ</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <!-- Tổng số vé của nhà xe -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-tale">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số vé đã bán</p>
+                                            <p class="fs-30">{{ isset($tongVe) ? $tongVe : 0 }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Tổng số chuyến xe của nhà xe -->
+                                <div class="col-md-6 mb-4">
+                                    <div class="card card-dark-blue">
+                                        <div class="card-body">
+                                            <p class="mb-4">Tổng số chuyến xe</p>
+                                            <p class="fs-30">{{ isset($chuyenxe) ? count($chuyenxe) : 0 }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
 
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- content-wrapper ends -->
+        <!-- content-wrapper ends -->
             <!-- partial:partials/_footer.html -->
             <footer class="footer">
                 <div class="d-sm-flex justify-content-center justify-content-sm-between">

@@ -12,10 +12,11 @@ class CheckAdminLogin
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!Session::has('admin_logged_in')) {
+        if (!Session::has('admin_logged_in') && !Session::has('car_company_logged_in')) {
             return redirect()->route('dashboard.login');
         }
 
         return $next($request);
     }
+
 }
