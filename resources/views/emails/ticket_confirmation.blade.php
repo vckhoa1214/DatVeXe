@@ -99,6 +99,14 @@
                     <td>{{ implode(', ', $seatCodes) }}</td>
                 </tr>
                 <tr>
+                    <th>Tổng tiền</th>
+                    <td>{{ number_format($chuyenxe->price * $ve->numSeats, 0, ',', '.') }} VND</td>
+                </tr>
+                <tr>
+                    <th>Tình trạng</th>
+                    <td>{{$ve->statusTicket}}</td>
+                </tr>
+                <tr>
                     <th>Ngày Khởi Hành</th>
                     <td>{{ \Carbon\Carbon::parse($chuyenxe->departureTime)->format('d/m/Y') }}</td>
                 </tr>
@@ -108,7 +116,6 @@
                 </tr>
             </table>
         </div>
-
         <p>Chúng tôi rất mong được phục vụ bạn trong chuyến đi này!</p>
     </div>
 

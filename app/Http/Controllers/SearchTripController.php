@@ -30,10 +30,30 @@ class SearchTripController extends Controller
         $query = ChuyenXe::with(['nhaXe.reviews', 'loaiXe'])->where('numSeats', '>', 0);
 
         if ($request->filled(['start', 'end'])) {
-            $query->where('startProvince', $request->query('start'))
-                ->where('endProvince', $request->query('end'));
+            $start = strtolower($request->query('start'));  // Chuyển start về chữ thường
+            $end = strtolower($request->query('end'));      // Chuyển end về chữ thường
+
+            // Kiểm tra xem start có trong routeProvinces và end là endProvince
+            $query->where(function ($query) use ($start, $end) {
+                // So sánh startProvince và endProvince
+                $query->whereRaw('LOWER(startProvince) = ?', [$start])
+                    ->whereRaw('LOWER(endProvince) = ?', [$end]);
+
+                // Kiểm tra ngược lại: start là 1 tỉnh trong routeProvinces và end là endProvince
+                $query->orWhere(function ($query) use ($start, $end) {
+                    $query->whereRaw('LOWER(endProvince) = ?', [$end])
+                        ->whereRaw('JSON_CONTAINS(LOWER(routeProvinces), ?)', [json_encode([$start])]);
+                });
+
+                // Kiểm tra ngược lại: end là 1 tỉnh trong routeProvinces và start là startProvince
+                $query->orWhere(function ($query) use ($start, $end) {
+                    $query->whereRaw('LOWER(startProvince) = ?', [$start])
+                        ->whereRaw('JSON_CONTAINS(LOWER(routeProvinces), ?)', [json_encode([$end])]);
+                });
+            });
         }
 
+        // Các điều kiện lọc khác như ngày, giá, nhà xe, v.v. ...
         if ($request->filled('date') && $request->query('date') !== 'all') {
             try {
                 $startDate = Carbon::createFromFormat('d-m-Y', $request->query('date'))->format('Y-m-d');
@@ -99,6 +119,6 @@ class SearchTripController extends Controller
             'totalPage' => $totalPages,
             'requestParams' => $request->except('page'),
         ]);
-
     }
+
 }

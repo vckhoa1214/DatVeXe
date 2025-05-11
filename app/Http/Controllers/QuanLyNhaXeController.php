@@ -95,6 +95,7 @@ class QuanLyNhaXeController extends Controller
             }
             $nhaxe->imageJours = $img_jours;
         }
+        $nhaxe->updatedAt = now();
 
         $nhaxe->fill([
             'name' => $request->name,
@@ -172,6 +173,7 @@ class QuanLyNhaXeController extends Controller
             }
         }
 
+
         NhaXe::create([
             'name' => $request->name,
             'phoneNo' => is_array($request->phoneNo) ? $request->phoneNo : [$request->phoneNo],
@@ -182,6 +184,8 @@ class QuanLyNhaXeController extends Controller
             'imageCarCom' => $img_avatar,
             'imageJours' => $img_jours,
             'managerId' => $request->managerId,
+            'createdAt' => now(),
+            'updatedAt' => now(),
         ]);
 
         return redirect('/dashboard/quanlynhaxe');

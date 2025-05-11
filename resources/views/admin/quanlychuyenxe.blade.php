@@ -285,7 +285,6 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Tuyến đường</th>
-                                            <th>Điểm đón - Điểm dừng</th>
                                             <th>Ngày</th>
                                             <th>Thời gian</th>
                                             <th>Tổng số ghế</th>
@@ -298,12 +297,8 @@
                                         @foreach ($quanly_chuyenxe as $chuyen)
                                             <tr>
                                                 <td>{{ $chuyen->id }}</td>
-                                                <td>{{ $chuyen->startProvince }} <i
-                                                        class="bi bi-arrow-right"></i> {{ $chuyen->endProvince }}</td>
-                                                <td>{{ $chuyen->startLocation }} <i
-                                                        class="bi bi-arrow-right"></i> {{ $chuyen->endLocation }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($chuyen->startDate)->format('d/m/Y') }}
-                                                    - {{ \Carbon\Carbon::parse($chuyen->endDate)->format('d/m/Y') }}</td>
+                                                <td>{{ $chuyen->startProvince }} <i class="bi bi-arrow-right"></i> {{ $chuyen->endProvince }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($chuyen->startDate)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($chuyen->endDate)->format('d/m/Y') }}</td>
                                                 <td>{{ $chuyen->startTime }} - {{ $chuyen->endTime }}</td>
                                                 <td>{{ $chuyen->totalNumSeats }}</td>
                                                 <td>{{ $chuyen->LoaiXe->name }}</td>
@@ -311,18 +306,14 @@
                                                 <td class="d-flex pt-3 px-0">
                                                     <div class="d-flex align-items-center">
                                                         <!-- Nút sửa -->
-                                                        <button
-                                                            class="bi bi-pencil-square text-primary border-0 bg-transparent"
-                                                            onclick="window.location.href='{{ route('dashboard.suachuyenxe', ['id' => $chuyen->id]) }}'">
+                                                        <button class="bi bi-pencil-square text-primary border-0 bg-transparent"
+                                                                onclick="window.location.href='{{ route('dashboard.suachuyenxe', ['id' => $chuyen->id]) }}'">
                                                         </button>
                                                         <!-- Form xóa -->
-                                                        <form action="{{ route('dashboard.featureChuyenxe') }}"
-                                                              method="POST" onsubmit="return submitForm(this);"
-                                                              class="m-0">
+                                                        <form action="{{ route('dashboard.featureChuyenxe') }}" method="POST" onsubmit="return submitForm(this);" class="m-0">
                                                             @csrf
                                                             <input type="hidden" name="id" value="{{ $chuyen->id }},-">
-                                                            <button type="submit"
-                                                                    class="bi bi-trash text-danger mx-2 border-0 bg-transparent"></button>
+                                                            <button type="submit" class="bi bi-trash text-danger mx-2 border-0 bg-transparent"></button>
                                                         </form>
                                                     </div>
                                                 </td>

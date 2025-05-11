@@ -20,6 +20,13 @@
 @include('user.partials.header')
 
 <main>
+    <!-- Preloader -->
+    <div id="preloader" style="display: none;">
+        <div class="loading-animation">
+            <img src="{{ asset('images/loading/bus.gif') }}" alt="Loading..." width="100">
+            <p>Đang xử lý, vui lòng chờ...</p>
+        </div>
+    </div>
     <div class="container">
         <div class="accordion" id="accordionExample">
             <div class="steps my-4">

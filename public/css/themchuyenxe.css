@@ -15,10 +15,52 @@ input[type="file"] {
     cursor: pointer;
 }
 
+
 .upload:hover {
     background-color: #65ca65;
 }
 
 img {
     width: 50%;
+}
+/* Tùy chỉnh Select2 */
+.select2-container .select2-selection--multiple {
+    background-color: #f5f5f5; /* Nền sáng */
+    border: 1px solid #ccc; /* Viền mỏng và đơn giản */
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 14px;
+    color: #333;
+    box-shadow: none; /* Bỏ bóng */
+}
+
+.select2-container .select2-selection__rendered {
+    color: #333; /* Màu chữ */
+}
+
+.select2-container .select2-selection__choice {
+    background-color: #e9ecef; /* Màu nền nhẹ cho các mục đã chọn */
+    color: #333; /* Màu chữ */
+    border: 1px solid #ccc; /* Viền mỏng cho các mục đã chọn */
+}
+
+.select2-container .select2-selection__clear {
+    color: #007bff; /* Màu cho nút xóa */
+}
+
+.select2-dropdown {
+    background-color: #fff; /* Nền dropdown trắng */
+    border: 1px solid #ccc; /* Viền mỏng cho dropdown */
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+.select2-dropdown .select2-results__option {
+    padding: 8px 10px;
+    color: #333; /* Màu chữ cho các mục */
+}
+
+.select2-dropdown .select2-results__option--highlighted {
+    background-color: #f1f1f1; /* Nền sáng khi hover */
 }

@@ -13,7 +13,7 @@ class ChuyenXe extends Model
     protected $fillable = [
         'startProvince', 'endProvince', 'startLocation', 'endLocation',
         'startDate', 'endDate', 'startTime', 'endTime', 'locationImage',
-        'numSeats', 'totalNumSeats', 'price', 'carId', 'cateCarId',
+        'numSeats', 'totalNumSeats', 'price', 'carId', 'cateCarId', 'routeProvinces',
         'createdAt', 'updatedAt'
     ];
 
@@ -21,12 +21,12 @@ class ChuyenXe extends Model
 
     public function nhaXe()
     {
-        return $this->belongsTo(NhaXe::class, 'carId');  // Liên kết với NhaXes qua carId
+        return $this->belongsTo(NhaXe::class, 'carId');
     }
 
     public function loaiXe()
     {
-        return $this->belongsTo(LoaiXe::class, 'cateCarId');  // Liên kết với LoaiXes qua cateCarId
+        return $this->belongsTo(LoaiXe::class, 'cateCarId');
     }
 
     public function veDaDats()

@@ -8,6 +8,7 @@ use App\Models\NhaXe;
 use App\Models\VeDaDat;
 use App\Models\TaiKhoan;
 use App\Models\LoaiXe;
+use App\Models\Review;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -253,10 +254,15 @@ class DashboardController extends Controller
     {
         $id = $request->input('id');
 
+        // Xóa review trước
+        Review::where('veId', $id)->delete();
+
+        // Rồi mới xóa vé
         VeDaDat::where('id', $id)->delete();
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Xóa vé và đánh giá thành công');
     }
+
 
 
     public function showChuyenXe(Request $request)
@@ -334,6 +340,8 @@ class DashboardController extends Controller
         // Lấy danh sách các tỉnh thành từ phương thức provinceList()
         $provinces = $this->provinceList();
 
+        $routeProvinces = json_decode($details->routeProvinces, true);
+
         // Lọc danh sách tỉnh thành bắt đầu và kết thúc
         $startProvinceList = array_filter($provinces, fn($e) => $e['name'] !== $details->startProvince);
         $endProvinceList = array_filter($provinces, fn($e) => $e['name'] !== $details->endProvince);
@@ -341,7 +349,7 @@ class DashboardController extends Controller
         // Trả về view chi tiết chuyến xe
         return view('admin.thongtinchitietChuyenXe', compact(
             'details', 'danhsachNhaXe', 'danhsachLoaiXe',
-            'infoAcc', 'startProvinceList', 'endProvinceList'
+            'infoAcc', 'startProvinceList', 'endProvinceList','routeProvinces','provinces'
         ));
     }
 
@@ -354,6 +362,7 @@ class DashboardController extends Controller
         ChuyenXe::where('id', $id)->update([
             'startProvince' => $request->startProvince,
             'endProvince' => $request->endProvince,
+            'routeProvinces' => json_encode($request->routeProvinces),
             'startLocation' => $request->startLocation,
             'endLocation' => $request->endLocation,
             'startDate' => $request->startDate,
@@ -384,11 +393,13 @@ class DashboardController extends Controller
     public function addChuyenXe(Request $request)
     {
         // Nhận ảnh từ form
-        $img = $request->file('image'); // Đảm bảo tên trường trùng với trong view
+        $img = $request->file('image');
 
         // Các dữ liệu khác từ form
         $startProvince = $request->startProvince;
         $endProvince = $request->endProvince;
+        $routeProvinces = $request->routeProvinces;
+        $routeProvincesJson = $routeProvinces ? json_encode($routeProvinces) : null;
         $startLocation = $request->startLocation;
         $endLocation = $request->endLocation;
         $startDate = $request->startDate;
@@ -412,14 +423,13 @@ class DashboardController extends Controller
         }
         $cateId = $category->id;
 
-        // Kiểm tra và lưu ảnh vào thư mục public/images/locationImages
         $locationImage = null;
         if ($img) {
             // Tạo tên file ảnh
             $imageName = time() . '.' . $img->getClientOriginalExtension();
 
             // Di chuyển ảnh vào thư mục public/images/locationImages
-            $img->move(public_path('images/locationImages'), $imageName);
+            $img->move(public_path('/images/locationImages'), $imageName);
 
             // Lưu đường dẫn vào CSDL
             $locationImage = 'images/locationImages/' . $imageName;
@@ -429,6 +439,7 @@ class DashboardController extends Controller
         ChuyenXe::create([
             'startProvince' => $startProvince,
             'endProvince' => $endProvince,
+            'routeProvinces' => $routeProvincesJson,
             'startLocation' => $startLocation,
             'endLocation' => $endLocation,
             'startDate' => $startDate,

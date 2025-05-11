@@ -27,6 +27,8 @@
 
     <script src="https://npmcdn.com/flatpickr/dist/flatpickr.min.js"></script>
     <script src="https://npmcdn.com/flatpickr@4.6.13/dist/l10n/vn.js"></script>
+    <link rel="stylesheet" href="/css/themchuyenxe.css">
+
 </head>
 
 <body>
@@ -233,30 +235,47 @@
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlyve">
-                        <i class="fa-solid fa-ticket menu-icon"></i>
-                        <span class="menu-title">Quản lý vé đặt</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlynhaxe">
-                        <i class="fa-solid fa-car menu-icon"></i>
-                        <span class="menu-title">Quản lý nhà xe</span>
-                    </a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/dashboard/quanlychuyenxe">
-                        <i class="fa-solid fa-bus menu-icon"></i>
-                        <span class="menu-title">Quản lý chuyến xe</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard/quanlytaikhoan">
-                        <i class="fa-solid fa-users menu-icon"></i>
-                        <span class="menu-title">Quản lý tài khoản</span>
-                    </a>
-                </li>
+                @if($infoAcc->isAdmin)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlynhaxe">
+                            <i class="fa-solid fa-car menu-icon"></i>
+                            <span class="menu-title">Quản lý nhà xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlytaikhoan">
+                            <i class="fa-solid fa-users menu-icon"></i>
+                            <span class="menu-title">Quản lý tài khoản</span>
+                        </a>
+                    </li>
+                @endif
+                <!-- Menu của nhà xe -->
+                @if($infoAcc->isCarCompany)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard/quanlyve">
+                            <i class="fa-solid fa-ticket menu-icon"></i>
+                            <span class="menu-title">Quản lý vé đặt</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/dashboard/quanlychuyenxe">
+                            <i class="fa-solid fa-bus menu-icon"></i>
+                            <span class="menu-title">Quản lý chuyến xe</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </nav>
         <!-- partial -->
@@ -300,6 +319,26 @@
                                         </div>
                                     </div>
 
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-12">
+                                            <div class="form-group row justify-content-center">
+                                                <div class="col-sm-9">
+                                                    <label><i class="fa-solid fa-map-marker-alt"></i> Trạm dừng</label>
+                                                    <select name="routeProvinces[]" class="form-control" id="routeProvinces" multiple>
+                                                        @foreach($provinces as $province)
+                                                            <option value="{{ $province['name'] }}"
+                                                                    @if(in_array($province['name'], json_decode($details->routeProvinces) ?? [])) selected @endif>
+                                                                {{ $province['name'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <small class="form-text text-muted">Chọn các trạm dừng từ danh sách.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     {{-- Tỉnh kết thúc --}}
                                     <div class="row">
                                         <div class="col-md-6">
@@ -315,7 +354,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-md-6">
                                             <div class="form-group row justify-content-center">
                                                 <div class="col-sm-9">
@@ -381,19 +419,34 @@
                                     {{-- Nhà xe và Loại xe --}}
                                     <hr>
                                     <div class="row justify-content-center">
-                                        <div class="col-md-6">
-                                            <div class="form-group row justify-content-center">
-                                                <div class="col-sm-10">
-                                                    <label><i class="fa-solid fa-bus"></i> Nhà xe</label>
-                                                    <select name="nhaxe" class="form-control">
-                                                        <option selected>{{ $details->nhaxe->name }}</option>
-                                                        @foreach($danhsachNhaXe as $nhaxe)
-                                                            <option>{{ $nhaxe->name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                        @if($infoAcc->isAdmin)
+                                            <div class="col-md-6">
+                                                <div class="form-group row justify-content-center">
+                                                    <div class="col-sm-10">
+                                                        <label><i class="fa-solid fa-bus"></i> Nhà xe</label>
+                                                        <select name="nhaxe" class="form-control" required>
+                                                            <option value="" hidden>Chọn nhà xe</option>
+                                                            <option value="{{ $details->nhaxe->name }}" selected>{{ $details->nhaxe->name }}</option>
+                                                            @foreach($danhsachNhaXe as $nhaxe)
+                                                                @if($nhaxe->name !== $details->nhaxe->name)
+                                                                    <option value="{{ $nhaxe->name }}">{{ $nhaxe->name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @else
+                                            <input type="hidden" name="nhaxe" value="{{ $infoAcc->nhaXe->id }}">
+                                            <div class="col-md-6">
+                                                <div class="form-group row justify-content-center">
+                                                    <div class="col-sm-10">
+                                                        <label><i class="fa-solid fa-bus"></i> Nhà xe</label>
+                                                        <input type="text" class="form-control" value="{{ $infoAcc->nhaXe->name }}" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
 
                                         <div class="col-md-6">
                                             <div class="form-group row justify-content-center">
@@ -529,6 +582,12 @@
         // set today date
         defaultDate: new Date()
 
+    });
+    $(document).ready(function() {
+        $('#routeProvinces').select2({
+            placeholder: "Chọn trạm dừng",
+            allowClear: true
+        });
     });
 
 </script>
