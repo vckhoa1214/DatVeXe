@@ -14,12 +14,10 @@ CREATE TABLE TaiKhoans (
     imageAccount VARCHAR(255),
     isAdmin BOOLEAN,
     isVerified BOOLEAN,
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL
+	isCarCompany BOOLEAN,
+    createdAt DATETIME ,
+    updatedAt DATETIME 
 );
-
-ALTER TABLE TaiKhoans ADD COLUMN role VARCHAR(50) DEFAULT 'user';
-
 
 -- Tạo bảng NhaXes
 CREATE TABLE NhaXes (
@@ -36,16 +34,18 @@ CREATE TABLE NhaXes (
     stars FLOAT,
     imageCarCom VARCHAR(255),
     imageJours JSON,
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL
+	managerId INT UNIQUE,
+    createdAt DATETIME ,
+    updatedAt DATETIME ,
+	FOREIGN KEY (managerId) REFERENCES TaiKhoans(id)
 );
 
 -- Tạo bảng LoaiXes
 CREATE TABLE LoaiXes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL
+    createdAt DATETIME ,
+    updatedAt DATETIME 
 );
 
 -- Tạo bảng ChuyenXes
@@ -53,6 +53,7 @@ CREATE TABLE ChuyenXes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     startProvince VARCHAR(255),
     endProvince VARCHAR(255),
+	routeProvinces JSON,
     startLocation VARCHAR(255),
     endLocation VARCHAR(255),
     startDate VARCHAR(255),
@@ -65,8 +66,8 @@ CREATE TABLE ChuyenXes (
     price DECIMAL(10, 2),
     carId INT,
     cateCarId INT,
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL,
+    createdAt DATETIME ,
+    updatedAt DATETIME ,
     FOREIGN KEY (carId) REFERENCES NhaXes(id),
     FOREIGN KEY (cateCarId) REFERENCES LoaiXes(id)
 );
@@ -81,8 +82,9 @@ CREATE TABLE VeDaDats (
     fullName VARCHAR(255),
     jourId INT,
     accId INT,
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL,
+    createdAt DATETIME ,
+    updatedAt DATETIME ,
+	seatCodes JSON,
     FOREIGN KEY (jourId) REFERENCES ChuyenXes(id),
     FOREIGN KEY (accId) REFERENCES TaiKhoans(id)
 );
@@ -95,8 +97,8 @@ CREATE TABLE Reviews (
     accId INT,
     carId INT,
 	veId INT,
-    createdAt DATETIME NOT NULL,
-    updatedAt DATETIME NOT NULL,
+    createdAt DATETIME ,
+    updatedAt DATETIME ,
     FOREIGN KEY (accId) REFERENCES TaiKhoans(id),
     FOREIGN KEY (carId) REFERENCES NhaXes(id),
 	FOREIGN KEY (veId) REFERENCES VeDaDats(id)
