@@ -1,0 +1,57 @@
+body {
+    font-family: 'DejaVu Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    padding: 40px;
+    background-color: #ffffff;
+}
+
+.ticket-container {
+    border: 2px dashed #4CAF50;
+    border-radius: 10px;
+    padding: 30px;
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+}
+
+.ticket-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.ticket-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #4CAF50;
+}
+
+.ticket-details {
+    margin-top: 20px;
+}
+
+.ticket-details table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ticket-details th,
+.ticket-details td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.ticket-details th {
+    background-color: #f0f0f0;
+    width: 30%;
+}
+
+.note {
+    margin-top: 25px;
+    font-style: italic;
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+}

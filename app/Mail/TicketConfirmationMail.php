@@ -8,6 +8,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class TicketConfirmationMail extends Mailable
 {
@@ -31,13 +33,25 @@ class TicketConfirmationMail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.ticket_confirmation')
-            ->subject($this->subject) // Set the subject for the email
+        // Tạo nội dung PDF từ view
+        $pdf = Pdf::loadView('pdf.ticket', [
+            've' => $this->ve,
+            'seatCodes' => $this->seatCodes,
+            'chuyenxe' => $this->chuyenxe
+        ]);
+
+        // Tên file PDF
+        $filename = 've_xe_' . time() . '.pdf';
+
+        return $this->view('emails.ticket_confirmation_minimal') // email ngắn gọn
+        ->subject($this->subject)
             ->with([
                 've' => $this->ve,
-                'seatCodes' => $this->seatCodes,
                 'chuyenxe' => $this->chuyenxe,
-                'subject' => $this->subject, // Pass the subject to the view
+                'seatCodes' => $this->seatCodes,
+            ])
+            ->attachData($pdf->output(), $filename, [
+                'mime' => 'application/pdf',
             ]);
     }
 }
