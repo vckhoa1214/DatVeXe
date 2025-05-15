@@ -1,6 +1,21 @@
 <header>
-    <!-- place navbar here -->
-    <div id="preloader"></div>
+    <!-- Preloader -->
+    <div id="preloader" style="
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: #fff;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        ">
+        <img src="{{ asset('images/loading/bus.gif') }}" alt="Loading..." width="100" />
+        <p style="margin-top: 15px; font-size: 18px; color: #555;">Đang xử lý, vui lòng chờ...</p>
+    </div>
+
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-md bg-header navbar-dark py-0">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
@@ -13,6 +28,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Các menu nav item -->
                     <li class="nav-item text-white">
                         <a class="nav-link text-center px-4" href="{{ url('/nha-xe') }}">
                             <i class="bi bi-truck icon d-inline"></i>
@@ -27,7 +43,7 @@
                     </li>
 
                     @auth
-                        <!-- Nếu đã đăng nhập -->
+                        <!-- Các menu cho user đăng nhập -->
                         <li class="nav-item dropdown mx-2">
                             <a class="nav-link text-center" href="#" id="navbarDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
@@ -54,6 +70,7 @@
                             </ul>
                         </li>
 
+                        <!-- Accordion cho mobile -->
                         <li class="nav-items text-center text-white hamburger">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingThree">
@@ -107,19 +124,13 @@
             </div>
         </div>
     </nav>
-    <style>
-        #preloader {
-            height: 100vh;
-            width: 100vw;
-            background: #fff url("{{ asset('images/loading/bus.gif') }}") no-repeat center center;
-            position: fixed;
-            z-index: 100;
-        }
-    </style>
+
     <script>
         window.addEventListener('load', function () {
-            const preloader = document.querySelector('#preloader');
-            preloader.style.display = 'none';
-        })
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.style.display = 'none';
+            }
+        });
     </script>
 </header>

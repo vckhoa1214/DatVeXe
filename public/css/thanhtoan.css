@@ -28,3 +28,137 @@ input:focus{
     display: block;
     margin: 0 auto;
 }
+/* Lưới ghế cho ghế ngồi (4 hàng) */
+.seats-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 ghế mỗi hàng */
+    grid-auto-rows: auto;
+    gap: 10px;
+    justify-items: center;
+    padding: 10px;
+    max-width: 360px;
+    margin: 0 auto; /* Căn giữa toàn bộ */
+}
+
+/* CHỈ ÁP DỤNG CHO GHẾ NGỒI - căn giữa phần ghế ngồi trong container */
+.seats-grid-4 {
+    justify-content: center; /* Căn giữa lưới ghế bên trong */
+    max-width: 100%;
+}
+
+/* Container chứa ghế ngồi: căn giữa toàn bộ phần tầng và ghế */
+.bus-floor-container.justify-center {
+    justify-content: center;
+}
+
+/* Tùy chọn: Giới hạn chiều rộng của floor ghế ngồi cho đẹp */
+.bus-floor-container.justify-center .bus-floor {
+    width: 65%;           /* Giảm chiều rộng xuống còn 65% */
+    max-width: 240px;     /* Giới hạn chiều rộng tương ứng */
+}
+
+/* Container chứa phần chọn ghế */
+.seat-selection-container {
+    padding: 20px;
+    background-color: #f5f5f5; /* Màu nền nhẹ để phân biệt */
+    border-radius: 10px;  /* Bo tròn các góc */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng đổ nhẹ */
+    margin: 20px 0;  /* Khoảng cách giữa các phần */
+}
+
+/* Bố trí các tầng ngang (tầng dưới bên trái, tầng trên bên phải) */
+.bus-floor-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+/* Định dạng cho từng tầng */
+.bus-floor {
+    width: 48%; /* Mỗi tầng chiếm 48% chiều rộng */
+    padding: 10px;
+}
+
+/* Tiêu đề tầng */
+.floor-title {
+    font-size: 1rem; /* Kích thước tiêu đề vừa phải */
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* Lưới ghế */
+.seats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 ghế mỗi hàng */
+    grid-gap: 6px; /* Khoảng cách nhỏ giữa các ghế */
+    justify-items: center; /* Căn giữa các ghế */
+}
+
+/* Wrapper của ghế */
+.seat-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Ẩn checkbox */
+.seat-checkbox {
+    display: none;
+}
+
+/* Nhãn ghế - kích thước vừa phải, không quá nhỏ */
+.seat-label {
+    display: inline-block;
+    width: 28px;  /* Tăng từ 20px lên 28px */
+    height: 28px;  /* Tăng từ 20px lên 28px */
+    background-color: #8bc34a;  /* Màu ghế trống */
+    color: white;
+    border-radius: 50%; /* Hình tròn */
+    text-align: center;
+    line-height: 28px;  /* Căn giữa chữ */
+    font-size: 0.6rem;  /* Tăng kích thước chữ */
+    font-weight: 600;
+    border: 2px solid #4caf50;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Khi di chuột qua ghế */
+.seat-label:hover {
+    transform: scale(1.1);  /* Phóng to nhẹ khi hover */
+    background-color: #66bb6a;  /* Màu khi hover */
+    border-color: #388E3C;
+}
+
+/* Khi ghế được chọn */
+.seat-checkbox:checked + .seat-label {
+    background-color: #2196F3;  /* Màu khi chọn ghế */
+    border-color: #0b7dda;
+}
+
+/* Màu ghế đã đặt */
+.seat-label.reserved {
+    background-color: #ccc;
+    border-color: #aaa;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Khi ghế đã đặt và được chọn */
+.seat-checkbox:checked + .seat-label.reserved {
+    background-color: #bbb;
+}
+
+/* Lối đi giữa các ghế */
+.seats-grid .empty {
+    visibility: hidden;
+}
+
+/* Ẩn các phần tử không cần thiết */
+.numSeat {
+    display: none;
+}

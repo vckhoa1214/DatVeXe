@@ -21,7 +21,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 1,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
-                'seatCodes' => json_encode(["S50", "S49"]),
+                'seatCodes' => json_encode(["A1", "A2"]),
             ],
             [
                 'numSeats' => 1,
@@ -33,7 +33,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
-                'seatCodes' => json_encode(["S50"]),
+                'seatCodes' => json_encode(["A3"]),
             ],
             [
                 'numSeats' => 3,
@@ -45,7 +45,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
-                'seatCodes' => json_encode(["S50", "S49","S48"]),
+                'seatCodes' => json_encode(["B1", "B2","B3"]),
             ],
             [
                 'numSeats' => 1,
@@ -57,7 +57,7 @@ class VeDaDatSeeder extends Seeder
                 'accId' => 2,
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
-                'seatCodes' => json_encode(["S50"]),
+                'seatCodes' => json_encode(["A5"]),
             ],
         ]);
     }

@@ -24,16 +24,6 @@ class LoaiXeSeeder extends Seeder
                 'createdAt' => Carbon::now(),
                 'updatedAt' => Carbon::now(),
             ],
-            [
-                'name' => 'Giường nằm đôi',
-                'createdAt' => Carbon::now(),
-                'updatedAt' => Carbon::now(),
-            ],
-            [
-                'name' => 'Limousine',
-                'createdAt' => Carbon::now(),
-                'updatedAt' => Carbon::now(),
-            ],
         ]);
     }
 }
