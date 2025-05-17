@@ -311,6 +311,26 @@
 
                                     @endif
                                 </div>
+
+                                <form method="GET" action="{{ route('dashboard.quanlyve') }}" class="d-flex mb-3" style="max-width: 450px;">
+                                    <input type="hidden" name="status" value="{{ $statusTicket }}">
+                                    <div class="input-group w-100 shadow-sm rounded">
+                                        <input
+                                            type="text"
+                                            name="searchName"
+                                            class="form-control border-0"
+                                            placeholder="Tìm theo họ tên khách hàng..."
+                                            value="{{ old('searchName', $searchName ?? '') }}"
+                                            aria-label="Tìm theo họ tên khách hàng"
+                                            autocomplete="off"
+                                        >
+                                        <button class="btn btn-primary" type="submit" title="Tìm kiếm">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+
+
                                 <div class="table-responsive">
                                     <table class="table col-12">
                                         <thead>
@@ -330,12 +350,10 @@
                                             <tr>
                                                 <td>{{ $ticket->id }}</td>
                                                 <td>{{ $ticket->taiKhoan->hoTen ?? $ticket->fullName }}</td>
-                                                <td>{{ $ticket->chuyenXe->startProvince }}
-                                                    - {{ $ticket->chuyenXe->endProvince }}</td>
+                                                <td>{{ $ticket->chuyenXe->startProvince }} - {{ $ticket->chuyenXe->endProvince }}</td>
                                                 <td>{{ $ticket->chuyenXe->startDate }}</td>
                                                 <td>{{ $ticket->numSeats }}</td>
-                                                <td>{{ number_format($ticket->chuyenXe->price * $ticket->numSeats) }}đ
-                                                </td>
+                                                <td>{{ number_format($ticket->chuyenXe->price * $ticket->numSeats) }}đ</td>
                                                 <td>
                                                     <label class="badge
                             {{ $ticket->statusTicket == 'Đã thanh toán' ? 'badge-success' :
@@ -371,7 +389,10 @@
                                     <ul class="pagination">
                                         @for ($i = 1; $i <= $totalPage; $i++)
                                             <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                                <a class="page-link" href="?page={{ $i }}{{ $statusTicket ? '&status=' . urlencode($statusTicket) : '' }}">{{ $i }}</a>
+                                                <a class="page-link"
+                                                   href="?page={{ $i }}{{ $statusTicket ? '&status=' . urlencode($statusTicket) : '' }}{{ $searchName ? '&searchName=' . urlencode($searchName) : '' }}">
+                                                    {{ $i }}
+                                                </a>
                                             </li>
                                         @endfor
                                     </ul>
@@ -397,6 +418,7 @@
                 <!-- end footer -->
             </div>
         </div>
+
         <!-- main-panel ends -->
     </div>
     <!-- page-body-wrapper ends -->

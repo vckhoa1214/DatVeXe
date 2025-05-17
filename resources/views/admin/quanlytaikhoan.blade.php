@@ -266,6 +266,25 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Quản lý tài khoản</h4>
+                                <form method="GET" action="{{ route('dashboard.quanlytaikhoan') }}" class="mb-4" style="max-width: 500px;">
+                                    <div class="input-group">
+    <span class="input-group-text bg-white" id="search-icon">
+      <i class="bi bi-search"></i>
+    </span>
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            class="form-control"
+                                            placeholder="Tìm kiếm theo tên hoặc email..."
+                                            aria-label="Tìm kiếm tài khoản"
+                                            aria-describedby="search-icon"
+                                            value="{{ old('search', $search ?? '') }}"
+                                        >
+                                        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                                    </div>
+                                </form>
+
+
                                 <a class="bi bi-plus-square btn btn-primary"
                                    href="{{ url('/dashboard/quanlytaikhoan/them') }}"> Thêm tài khoản</a>
                                 <div class="table-responsive">

@@ -12,24 +12,71 @@ use Illuminate\Support\Facades\Session;
 
 class QuanLyNhaXeController extends Controller
 {
+
+    private function stripVietnamese($str)
+    {
+        $str = mb_strtolower($str, 'UTF-8');
+        $unicode = [
+            'a'=>'á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ',
+            'd'=>'đ',
+            'e'=>'é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ',
+            'i'=>'í|ì|ỉ|ĩ|ị',
+            'o'=>'ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ',
+            'u'=>'ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự',
+            'y'=>'ý|ỳ|ỷ|ỹ|ỵ'
+        ];
+
+        foreach ($unicode as $nonUnicode => $uni) {
+            $str = preg_replace("/($uni)/u", $nonUnicode, $str);
+        }
+
+        // Chuẩn hóa khoảng trắng
+        $str = trim(preg_replace('/\s+/', ' ', $str));
+        return $str;
+    }
+
     public function show(Request $request)
     {
         $limit = 5;
         $page = $request->query('page', 1);
         $offset = ($page - 1) * $limit;
 
-        $nhaxes = NhaXe::orderBy('id', 'ASC')->offset($offset)->limit($limit)->get();
-        $count = NhaXe::count();
-
+        $search = $request->query('search');
         $infoAcc = TaiKhoan::find(Session::get('user')->id);
+
+        if (!empty($search)) {
+            $searchNormalized = $this->stripVietnamese($search);
+
+            $filtered = NhaXe::all()->filter(function ($nhaxe) use ($searchNormalized) {
+                $nameWords = explode(' ', $this->stripVietnamese($nhaxe->name));
+                $searchWords = explode(' ', $searchNormalized);
+
+                // Kiểm tra tất cả từ trong search phải xuất hiện nguyên vẹn trong tên
+                foreach ($searchWords as $word) {
+                    if (!in_array($word, $nameWords)) {
+                        return false;
+                    }
+                }
+                return true;
+            })->values();
+
+            $count = $filtered->count();
+            $nhaxes = $filtered->slice($offset, $limit);
+        } else {
+            $count = NhaXe::count();
+            $nhaxes = NhaXe::orderBy('id', 'ASC')->offset($offset)->limit($limit)->get();
+        }
 
         return view('admin.quanlynhaxe', [
             'nhaxes' => $nhaxes,
             'currentPage' => $page,
             'totalPage' => ceil($count / $limit),
             'infoAcc' => $infoAcc,
+            'search' => $search,
         ]);
     }
+
+
 
     public function editNhaXe($id)
     {

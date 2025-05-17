@@ -15,23 +15,44 @@ class QuanLyTaiKhoanController extends Controller
 {
     public function show(Request $request)
     {
-        $limit = 5;  // Giới hạn số lượng tài khoản hiển thị trên mỗi trang
-        $page = $request->query('page', 1);  // Trang hiện tại
+        $limit = 5;  // Số tài khoản mỗi trang
+        $page = (int) $request->query('page', 1);
         $offset = ($page - 1) * $limit;
 
-        // Lấy danh sách tài khoản, sắp xếp theo ID và phân trang
-        $taiKhoans = TaiKhoan::orderBy('id', 'ASC')->offset($offset)->limit($limit)->get();
-        $count = TaiKhoan::count();  // Đếm tổng số tài khoản
+        $search = $request->query('search'); // Lấy từ khóa tìm kiếm
 
-        $infoAcc = TaiKhoan::find(Session::get('user')->id);  // Lấy thông tin tài khoản hiện tại
+        $infoAcc = TaiKhoan::find(Session::get('user')->id);  // Thông tin tài khoản hiện tại
+
+        if (!empty($search)) {
+            // Tìm theo fullName hoặc email chứa từ khóa (case-insensitive)
+            $query = TaiKhoan::where('fullName', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%");
+
+            $count = $query->count();
+
+            $taiKhoans = $query->orderBy('id', 'ASC')
+                ->offset($offset)
+                ->limit($limit)
+                ->get();
+        } else {
+            // Nếu không có từ khóa tìm kiếm thì lấy tất cả
+            $count = TaiKhoan::count();
+
+            $taiKhoans = TaiKhoan::orderBy('id', 'ASC')
+                ->offset($offset)
+                ->limit($limit)
+                ->get();
+        }
 
         return view('admin.quanlytaikhoan', [
             'taiKhoans' => $taiKhoans,
             'currentPage' => $page,
             'totalPage' => ceil($count / $limit),
             'infoAcc' => $infoAcc,
+            'search' => $search,
         ]);
     }
+
 
     public function editTaiKhoan($id)
     {

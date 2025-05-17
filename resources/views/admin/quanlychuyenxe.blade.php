@@ -277,9 +277,30 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Quản lý chuyến xe</h4>
-                                <a href="{{ route('dashboard.themchuyenxe') }}" type="button"
-                                   class="bi bi-plus-square btn bg-primary" style="color: white;"> Thêm chuyến xe</a>
-                                <div class="table-responsive">
+
+                                <form method="GET" action="{{ route('dashboard.quanlychuyenxe') }}" class="form-inline mb-4">
+                                    <div class="input-group w-50">
+                                        <input
+                                            type="text"
+                                            name="searchTerm"
+                                            class="form-control"
+                                            placeholder="Tìm kiếm chuyến xe theo nhà xe, loại xe, nơi đi, nơi đến hoặc ngày khởi hành..."
+                                            value="{{ old('searchTerm', $searchTerm ?? '') }}"
+                                            aria-label="Tìm kiếm chuyến xe"
+                                        >
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="bi bi-search"></i> Tìm kiếm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <a href="{{ route('dashboard.themchuyenxe') }}" class="bi bi-plus-square btn bg-primary" style="color: white;">
+                                    Thêm chuyến xe
+                                </a>
+
+                                <div class="table-responsive mt-3">
                                     <table class="table table-hover">
                                         <thead>
                                         <tr>
@@ -305,11 +326,9 @@
                                                 <td>{{ $chuyen->NhaXe->name }}</td>
                                                 <td class="d-flex pt-3 px-0">
                                                     <div class="d-flex align-items-center">
-                                                        <!-- Nút sửa -->
                                                         <button class="bi bi-pencil-square text-primary border-0 bg-transparent"
                                                                 onclick="window.location.href='{{ route('dashboard.suachuyenxe', ['id' => $chuyen->id]) }}'">
                                                         </button>
-                                                        <!-- Form xóa -->
                                                         <form action="{{ route('dashboard.featureChuyenxe') }}" method="POST" onsubmit="return submitForm(this);" class="m-0">
                                                             @csrf
                                                             <input type="hidden" name="id" value="{{ $chuyen->id }},-">
@@ -322,12 +341,18 @@
                                         </tbody>
                                     </table>
                                 </div>
+
                                 <!-- Phân trang -->
-                                <nav aria-label="..." style="display: flex; justify-content: center">
+                                <nav aria-label="Page navigation" class="d-flex justify-content-center mt-3">
                                     <ul class="pagination">
                                         @for ($i = 1; $i <= $totalPage; $i++)
                                             <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                                <a class="page-link" href="?page={{ $i }}">{{ $i }}</a>
+                                                <a
+                                                    class="page-link"
+                                                    href="{{ route('dashboard.quanlychuyenxe', array_merge(request()->except('page'), ['page' => $i])) }}"
+                                                >
+                                                    {{ $i }}
+                                                </a>
                                             </li>
                                         @endfor
                                     </ul>
@@ -340,12 +365,13 @@
             </div>
             <footer class="footer">
                 <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.
-                            Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin
-                                template</a> from BootstrapDash.
-                            All rights reserved.</span>
-                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made
-                            with <i class="ti-heart text-danger ml-1"></i></span>
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+                Copyright © 2021. Premium
+                <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.
+            </span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
+                Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i>
+            </span>
                 </div>
             </footer>
         </div>

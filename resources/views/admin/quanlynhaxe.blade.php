@@ -265,8 +265,27 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">Quản lý nhà xe</h4>
+                                <form method="GET" action="{{ url('/dashboard/quanlynhaxe') }}" class="form-inline mb-4" style="max-width: 400px;">
+                                    <div class="input-group w-100">
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            class="form-control"
+                                            placeholder="Tìm kiếm theo tên nhà xe..."
+                                            value="{{ old('search', request('search')) }}"
+                                            aria-label="Tìm kiếm nhà xe"
+                                        >
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit">
+                                                <i class="bi bi-search"></i> Tìm
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
                                 <a class="bi bi-plus-square btn btn-primary"
                                    href="{{ url('/dashboard/quanlynhaxe/themnhaxe') }}"> Thêm nhà xe</a>
+
                                 <div class="table-responsive">
                                     <table class="table table-hover col-12">
                                         <thead>
@@ -319,7 +338,7 @@
                                     <ul class="pagination">
                                         @for ($i = 1; $i <= $totalPage; $i++)
                                             <li class="page-item {{ $i == $currentPage ? 'active' : '' }}">
-                                                <a class="page-link" href="?page={{ $i }}">{{ $i }}</a>
+                                                <a class="page-link" href="?page={{ $i }}{{ request('search') ? '&search=' . urlencode(request('search')) : '' }}">{{ $i }}</a>
                                             </li>
                                         @endfor
                                     </ul>
@@ -331,19 +350,20 @@
                     <!-- Footer -->
                     <footer class="footer">
                         <div class="d-sm-flex justify-content-center justify-content-sm-between">
-                    <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
-                        Copyright © 2021.
-                        Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a>
-                        from BootstrapDash. All rights reserved.
-                    </span>
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+                Copyright © 2021.
+                Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a>
+                from BootstrapDash. All rights reserved.
+            </span>
                             <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">
-                        Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i>
-                    </span>
+                Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i>
+            </span>
                         </div>
                     </footer>
                 </div>
             </div>
         </div>
+
         <!-- page-body-wrapper ends -->
     </div>
 </div>

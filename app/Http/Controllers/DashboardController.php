@@ -135,31 +135,26 @@ class DashboardController extends Controller
     // Hiển thị danh sách vé
     public function showTicket(Request $request)
     {
-        // Lấy accId từ session
         $accId = Session::get('user.id');
         $infoAcc = TaiKhoan::find($accId);
 
-        // Kiểm tra xem tài khoản có phải là nhà xe hay không
         $isCarCompany = $infoAcc->isCarCompany;
 
-        // Lấy trạng thái vé từ query string, mặc định là 'Vừa đặt'
         $statusTicket = $request->query('status', 'Vừa đặt');
 
-        // Lấy số trang và số bản ghi mỗi trang
+        // Lấy từ khóa tìm kiếm họ tên khách hàng (nếu có)
+        $searchName = $request->query('searchName', '');
+
         $limit = 3;
         $currentPage = (int) $request->query('page', 1);
         $offset = ($currentPage - 1) * $limit;
 
-        // Lọc vé theo trạng thái
         $query = VeDaDat::where('statusTicket', $statusTicket);
 
-        // Nếu tài khoản là nhà xe, chỉ lấy vé thuộc chuyến xe của nhà xe đó
         if ($isCarCompany) {
-            // Tìm nhà xe mà tài khoản này quản lý
             $nhaXe = NhaXe::where('managerId', $accId)->first();
 
             if (!$nhaXe) {
-                // Nếu không có nhà xe nào ứng với accId, trả về rỗng
                 $ve = collect();
                 return view('admin.quanlyve', [
                     'infoAcc' => $infoAcc,
@@ -169,14 +164,13 @@ class DashboardController extends Controller
                     've' => $ve,
                     'statusTicket' => $statusTicket,
                     'currentPage' => $currentPage,
-                    'totalPage' => 0
+                    'totalPage' => 0,
+                    'searchName' => $searchName // truyền luôn về view
                 ]);
             }
 
-            // Lấy các chuyến xe thuộc nhà xe đó
             $jourIds = ChuyenXe::where('carId', $nhaXe->id)->pluck('id');
 
-            // Nếu không có chuyến xe nào, trả về rỗng
             if ($jourIds->isEmpty()) {
                 $ve = collect();
                 return view('admin.quanlyve', [
@@ -187,19 +181,27 @@ class DashboardController extends Controller
                     've' => $ve,
                     'statusTicket' => $statusTicket,
                     'currentPage' => $currentPage,
-                    'totalPage' => 0
+                    'totalPage' => 0,
+                    'searchName' => $searchName
                 ]);
             }
 
-            // Lọc vé theo danh sách chuyến xe của nhà xe này
             $query->whereIn('jourId', $jourIds);
         }
 
-        // Tổng số vé theo điều kiện
+        // Thêm điều kiện tìm kiếm theo họ tên (searchName)
+        if (!empty($searchName)) {
+            $query->where(function ($q) use ($searchName) {
+                $q->where('fullName', 'LIKE', '%' . $searchName . '%')
+                    ->orWhereHas('taiKhoan', function ($q2) use ($searchName) {
+                        $q2->where('fullName', 'LIKE', '%' . $searchName . '%');
+                    });
+            });
+        }
+
         $total = $query->count();
         $totalPage = ceil($total / $limit);
 
-        // Lấy vé phân trang
         $ve = $query->with('chuyenXe')
             ->with('taiKhoan')
             ->orderBy('id', 'DESC')
@@ -207,7 +209,6 @@ class DashboardController extends Controller
             ->limit($limit)
             ->get();
 
-        // Trả về view
         return view('admin.quanlyve', [
             'infoAcc' => $infoAcc,
             'statusVuaDat' => $statusTicket == 'Vừa đặt',
@@ -216,11 +217,10 @@ class DashboardController extends Controller
             've' => $ve,
             'statusTicket' => $statusTicket,
             'currentPage' => $currentPage,
-            'totalPage' => $totalPage
+            'totalPage' => $totalPage,
+            'searchName' => $searchName
         ]);
     }
-
-
 
 
     public function showDetailTicket($id)
@@ -271,29 +271,39 @@ class DashboardController extends Controller
         $page = (int) $request->query('page', 1);
         $offset = ($page - 1) * $limit;
 
-        // Lấy thông tin tài khoản đăng nhập
+        $searchTerm = $request->query('searchTerm', '');
+
         $accId = Session::get('user.id');
         $infoAcc = TaiKhoan::find($accId);
 
-        // Kiểm tra nếu tài khoản là admin
         if ($infoAcc->isAdmin) {
-            // Admin có thể xem tất cả chuyến xe
             $query = ChuyenXe::with(['nhaxe', 'loaixe']);
         } else if ($infoAcc->isCarCompany) {
-            // Nếu là nhà xe, chỉ xem chuyến xe của nhà xe đó
             $carId = $infoAcc->nhaXe->id;
             $query = ChuyenXe::with(['nhaxe', 'loaixe'])
-                ->where('carId', $carId); // Lọc chuyến xe theo carId
+                ->where('carId', $carId);
         }
 
-        // Thực hiện phân trang
+        if ($searchTerm) {
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('nhaxe', function($q2) use ($searchTerm) {
+                    $q2->where('name', 'like', "%{$searchTerm}%");
+                })
+                    ->orWhereHas('loaixe', function($q2) use ($searchTerm) {
+                        $q2->where('name', 'like', "%{$searchTerm}%");
+                    })
+                    ->orWhere('startProvince', 'like', "%{$searchTerm}%")
+                    ->orWhere('endProvince', 'like', "%{$searchTerm}%")
+                    ->orWhere('startDate', 'like', "%{$searchTerm}%");
+            });
+        }
+
         $total = $query->count();
         $quanly_chuyenxe = $query->orderBy('id', 'ASC')
             ->offset($offset)
             ->limit($limit)
             ->get();
 
-        // Tính số trang
         $totalPage = ceil($total / $limit);
 
         return view('admin.quanlychuyenxe', [
@@ -301,8 +311,10 @@ class DashboardController extends Controller
             'quanly_chuyenxe' => $quanly_chuyenxe,
             'currentPage' => $page,
             'totalPage' => $totalPage,
+            'searchTerm' => $searchTerm,
         ]);
     }
+
 
     public function featureChuyenXe(Request $request)
     {
