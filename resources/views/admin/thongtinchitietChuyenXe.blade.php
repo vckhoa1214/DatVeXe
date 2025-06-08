@@ -285,7 +285,12 @@
                     <div class="col-12 grid-margin">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title">Chỉnh sửa chuyến xe</h4>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="card-title mb-0">Chỉnh sửa chuyến xe</h4>
+                                    <a href="{{ route('dashboard.danhsachkhachhang', $details->id) }}" target="_blank" class="btn btn-primary">
+                                        In danh sách hành khách
+                                    </a>
+                                </div>
                                 <form id="updateChuyenXe"
                                       action="{{ route('dashboard.capnhatchuyenxe', $details->id) }}" method="POST"
                                       class="form-sample d-flex justify-content-center flex-column">
@@ -419,6 +424,7 @@
                                     {{-- Nhà xe và Loại xe --}}
                                     <hr>
                                     <div class="row justify-content-center">
+                                        {{-- Nhà xe --}}
                                         @if($infoAcc->isAdmin)
                                             <div class="col-md-6">
                                                 <div class="form-group row justify-content-center">
@@ -426,10 +432,10 @@
                                                         <label><i class="fa-solid fa-bus"></i> Nhà xe</label>
                                                         <select name="nhaxe" class="form-control" required>
                                                             <option value="" hidden>Chọn nhà xe</option>
-                                                            <option value="{{ $details->nhaxe->name }}" selected>{{ $details->nhaxe->name }}</option>
+                                                            <option value="{{ $details->nhaxe->id }}" selected>{{ $details->nhaxe->name }}</option>
                                                             @foreach($danhsachNhaXe as $nhaxe)
-                                                                @if($nhaxe->name !== $details->nhaxe->name)
-                                                                    <option value="{{ $nhaxe->name }}">{{ $nhaxe->name }}</option>
+                                                                @if($nhaxe->id !== $details->nhaxe->id)
+                                                                    <option value="{{ $nhaxe->id }}">{{ $nhaxe->name }}</option>
                                                                 @endif
                                                             @endforeach
                                                         </select>
@@ -448,20 +454,24 @@
                                             </div>
                                         @endif
 
+                                        {{-- Loại xe --}}
                                         <div class="col-md-6">
                                             <div class="form-group row justify-content-center">
                                                 <div class="col-sm-10">
                                                     <label><i class="fa-solid fa-van-shuttle"></i> Loại xe</label>
-                                                    <select name="loaixe" class="form-control">
-                                                        <option selected>{{ $details->loaixe->name }}</option>
+                                                    <select name="loaixe" class="form-control" required>
+                                                        <option value="{{ $details->loaixe->id }}" selected>{{ $details->loaixe->name }}</option>
                                                         @foreach($danhsachLoaiXe as $lx)
-                                                            <option>{{ $lx->name }}</option>
+                                                            @if($lx->id !== $details->loaixe->id)
+                                                                <option value="{{ $lx->id }}">{{ $lx->name }}</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
 
                                     {{-- Số ghế và giá vé --}}
                                     <hr>

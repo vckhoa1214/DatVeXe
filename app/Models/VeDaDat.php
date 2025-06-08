@@ -27,4 +27,6 @@ class VeDaDat extends Model
     {
         return $this->hasOne(Review::class, 've_id');
     }
+
+
 }

@@ -84,7 +84,7 @@
                     <div class="col-lg-3 pb-0 p-4">
                         <div class="border-item d-flex flex-row">
                             <i class="fa-solid fa-calendar-days fa-2x"></i>
-                            <input type="date" name="date" class="form-control mx-2 fs-4 p-0 select-search datetime"
+                            <input type="text" name="date" class="form-control mx-2 fs-4 p-0 select-search datetime"
                                    style="background: #dbe2ef;" id="datetimepicker" placeholder="Ngày đi" required>
                         </div>
                         <hr style="margin-right:10px;">

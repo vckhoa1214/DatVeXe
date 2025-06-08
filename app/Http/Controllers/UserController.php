@@ -73,12 +73,16 @@ class UserController extends Controller
             'fullname' => 'required',
             'email' => 'required|email|unique:TaiKhoans,email',
             'password' => 'required|confirmed',
+            'phoneNum' => 'required',
+            'dob' => 'required|date',
         ]);
 
         $user = TaiKhoan::create([
             'fullName' => $request->fullname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'phoneNum' => $request->phoneNum,
+            'dob' => $request->dob,
             'imageAccount' => '/images/default.jpg',
             'isVerified' => false,
             'isAdmin' => false,
@@ -97,6 +101,7 @@ class UserController extends Controller
 
         return redirect()->route('login')->with('success', 'Vui lòng kiểm tra email để xác thực tài khoản!');
     }
+
 
 
     private function createJWTVerifyAccount($email)

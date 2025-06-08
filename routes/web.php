@@ -131,10 +131,12 @@ Route::prefix('dashboard')->group(function () {
         Route::post('/quanlychuyenxe/feature', [DashboardController::class, 'featureChuyenXe'])->name('dashboard.featureChuyenxe');
         Route::get('/quanlychuyenxe/chinhsua/{id}', [DashboardController::class, 'editChuyenXe'])->name('dashboard.suachuyenxe');
         Route::post('/quanlychuyenxe/capnhat/{id}', [DashboardController::class, 'updateChuyenXe'])->name('dashboard.capnhatchuyenxe');
+        Route::get('/quanlychuyenxe/danhsachkhachhang/{id}', [DashboardController::class, 'danhSachKhachHang'])->name('dashboard.danhsachkhachhang');
 
         // Thêm chuyến xe
         Route::get('/themchuyenxe', [DashboardController::class, 'themChuyenXe'])->name('dashboard.themchuyenxe');
         Route::post('/themchuyenxe', [DashboardController::class, 'addChuyenXe'])->name('dashboard.themchuyenxe.submit');
+
 
         // Quản lý nhà xe
         Route::get('/quanlynhaxe', [QuanLyNhaXeController::class, 'show'])->name('dashboard.quanlynhaxe');

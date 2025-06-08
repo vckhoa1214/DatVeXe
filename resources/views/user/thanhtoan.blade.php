@@ -17,6 +17,27 @@
 </head>
 
 <body>
+
+<div id="preloader" style="display: none;">
+    <div class="loading-animation">
+        <img src="{{ asset('images/loading/bus.gif') }}" alt="Loading..." width="100">
+        <p>Đang xử lý, vui lòng chờ...</p>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form"); // lấy form đầu tiên trên trang
+        const preloader = document.getElementById("preloader");
+
+        if (form && preloader) {
+            form.addEventListener("submit", function () {
+                preloader.style.display = "block"; // Hiện preloader
+            });
+        }
+    });
+</script>
+
+
 @include('user.partials.header')
 <main>
     <div class="container">

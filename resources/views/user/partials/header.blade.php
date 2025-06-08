@@ -1,20 +1,4 @@
 <header>
-    <!-- Preloader -->
-    <div id="preloader" style="
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        background: #fff;
-        z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        ">
-        <img src="{{ asset('images/loading/bus.gif') }}" alt="Loading..." width="100" />
-        <p style="margin-top: 15px; font-size: 18px; color: #555;">Đang xử lý, vui lòng chờ...</p>
-    </div>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-md bg-header navbar-dark py-0">
         <div class="container">
@@ -124,13 +108,4 @@
             </div>
         </div>
     </nav>
-
-    <script>
-        window.addEventListener('load', function () {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                preloader.style.display = 'none';
-            }
-        });
-    </script>
 </header>

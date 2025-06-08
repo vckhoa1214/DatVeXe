@@ -70,6 +70,26 @@
                                     @enderror
                                 </div>
 
+                                <!-- Thêm trường Số điện thoại -->
+                                <div class="form-group">
+                                    <label for="phoneNum" style="float: left">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phoneNum" name="phoneNum"
+                                           placeholder="Nhập số điện thoại" required value="{{ old('phoneNum') }}">
+                                    @error('phoneNum')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Thêm trường Ngày sinh -->
+                                <div class="form-group">
+                                    <label for="dob" style="float: left">Ngày sinh</label>
+                                    <input type="date" class="form-control" id="dob" name="dob"
+                                           required value="{{ old('dob') }}">
+                                    @error('dob')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="form-group">
                                     <label for="password" style="float: left">Mật khẩu</label>
                                     <input type="password" class="form-control" id="password" name="password"

@@ -20,31 +20,26 @@ class TicketConfirmationMail extends Mailable
     public $chuyenxe;
     public $subject;
 
-    /**
-     * Create a new message instance.
-     */
     public function __construct($ve, $seatCodes, $chuyenxe)
     {
         $this->ve = $ve;
         $this->seatCodes = $seatCodes;
         $this->chuyenxe = $chuyenxe;
-        $this->subject = $chuyenxe->startLocation . ' → ' . $chuyenxe->endLocation; // Set the subject dynamically
+        $this->subject = $chuyenxe->startLocation . ' → ' . $chuyenxe->endLocation;
     }
 
     public function build()
     {
-        // Tạo nội dung PDF từ view
         $pdf = Pdf::loadView('pdf.ticket', [
             've' => $this->ve,
             'seatCodes' => $this->seatCodes,
-            'chuyenxe' => $this->chuyenxe
+            'chuyenxe' => $this->chuyenxe,
         ]);
 
-        // Tên file PDF
         $filename = 've_xe_' . time() . '.pdf';
 
-        return $this->view('emails.ticket_confirmation_minimal') // email ngắn gọn
-        ->subject($this->subject)
+        return $this->view('emails.ticket_confirmation_minimal')
+            ->subject($this->subject)
             ->with([
                 've' => $this->ve,
                 'chuyenxe' => $this->chuyenxe,

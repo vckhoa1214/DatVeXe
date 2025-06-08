@@ -368,9 +368,19 @@ class DashboardController extends Controller
 
     public function updateChuyenXe(Request $request, $id)
     {
-        $car = NhaXe::where('name', $request->nhaxe)->first();
-        $cate = LoaiXe::where('name', $request->loaixe)->first();
+        // Lấy nhà xe (theo ID)
+        $car = NhaXe::find($request->nhaxe);
+        if (!$car) {
+            return back()->with('error', 'Không tìm thấy nhà xe.');
+        }
 
+        // Lấy loại xe (theo ID)
+        $cate = LoaiXe::find($request->loaixe);
+        if (!$cate) {
+            return back()->with('error', 'Không tìm thấy loại xe.');
+        }
+
+        // Cập nhật chuyến xe
         ChuyenXe::where('id', $id)->update([
             'startProvince' => $request->startProvince,
             'endProvince' => $request->endProvince,
@@ -387,8 +397,9 @@ class DashboardController extends Controller
             'price' => $request->price
         ]);
 
-        return redirect('/dashboard/quanlychuyenxe');
+        return redirect('/dashboard/quanlychuyenxe')->with('success', 'Cập nhật chuyến xe thành công.');
     }
+
 
     public function themChuyenXe()
     {
@@ -471,6 +482,18 @@ class DashboardController extends Controller
         // Sau khi tạo chuyến xe thành công
         return redirect('/dashboard/quanlychuyenxe')->with('success', 'Chuyến xe đã được tạo thành công');
     }
+
+    public function danhSachKhachHang($id)
+    {
+        $chuyenxe = ChuyenXe::findOrFail($id);
+
+        // Load vé và luôn load quan hệ tài khoản (taiKhoan)
+        $veDaDats = VeDaDat::with('taiKhoan')->where('jourId', $id)->get();
+
+        return view('admin.danhsachkhachhang', compact('chuyenxe', 'veDaDats'));
+    }
+
+
 
     private function provinceList()
     {
