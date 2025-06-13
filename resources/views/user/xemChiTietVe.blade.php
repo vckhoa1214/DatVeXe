@@ -70,7 +70,7 @@
                                 </div>
                                 <div class="col-3"></div>
                                 <div class="col-4">
-                                    <img src="{{ $veDaDat->ChuyenXe->locationImage ?? asset('default-image.png') }}"
+                                    <img src="{{ $veDaDat->chuyenXe->locationImage ? asset($veDaDat->chuyenXe->locationImage) : asset('default-image.png') }}"
                                          alt="{{ $veDaDat->ChuyenXe->endProvince ?? 'Chưa xác định' }}"
                                          class="img-fluid" style="height: 100%;">
                                 </div>

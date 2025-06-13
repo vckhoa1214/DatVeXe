@@ -327,10 +327,22 @@ class DashboardController extends Controller
         }
 
         if ($action === '-') {
+            // Lấy danh sách ID của các vé thuộc chuyến xe
+            $veIds = VeDaDat::where('jourId', $id)->pluck('id');
+
+            // Xóa các review liên quan trước
+            Review::whereIn('veId', $veIds)->delete();
+
+            // Sau đó xóa vé
             VeDaDat::where('jourId', $id)->delete();
-            ChuyenXe::destroy($id);
+
+            // Cuối cùng xóa chuyến xe
+            $chuyenXe->delete();
         } else {
-            ChuyenXe::create($chuyenXe->toArray());
+            // Nhân bản chuyến xe (chú ý loại bỏ các khóa chính nếu có)
+            $newChuyenXeData = $chuyenXe->toArray();
+            unset($newChuyenXeData['id']); // Xóa ID để tránh lỗi trùng khóa
+            ChuyenXe::create($newChuyenXeData);
         }
 
         return redirect()->back()->with('success', 'Hành động thành công!');

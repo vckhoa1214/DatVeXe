@@ -168,20 +168,28 @@ class QuanLyNhaXeController extends Controller
 
         // Xóa các chuyến xe liên quan đến nhà xe
         foreach ($nhaXe->chuyenXes as $chuyenXe) {
-            // Xóa vé đã đặt liên quan đến chuyến xe
-            $chuyenXe->veDaDats()->delete();
+            // Lấy danh sách vé đã đặt của chuyến xe
+            $veDaDats = $chuyenXe->veDaDats;
+
+            // Xóa reviews liên quan đến các vé
+            foreach ($veDaDats as $ve) {
+                $ve->review()->delete();
+            }
+
+            // Xóa vé đã đặt
+            $veDaDats->each->delete();
 
             // Xóa chuyến xe
             $chuyenXe->delete();
         }
 
-        // Xóa các đánh giá liên quan đến nhà xe
+        // Xóa các reviews liên quan đến nhà xe (nếu có)
         $nhaXe->reviews()->delete();
 
         // Cuối cùng, xóa nhà xe
         $nhaXe->delete();
 
-        // Xóa vé không liên kết với chuyến xe (nếu có)
+        // Dọn dẹp: Xóa các vé không còn liên kết (nếu có)
         VeDaDat::whereNull('jourId')->delete();
 
         return redirect()->back()->with('success', 'Nhà xe và các chuyến xe liên quan đã được xóa!');

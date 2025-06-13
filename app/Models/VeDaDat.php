@@ -15,18 +15,16 @@ class VeDaDat extends Model
 
     public function taiKhoan()
     {
-        return $this->belongsTo(TaiKhoan::class, 'accId', 'id');
+        return $this->belongsTo(TaiKhoan::class, 'accId','id');
     }
 
     public function chuyenXe()
     {
-        return $this->belongsTo(ChuyenXe::class, 'jourId', 'id');
+        return $this->belongsTo(ChuyenXe::class, 'jourId','id');
     }
 
     public function review()
     {
-        return $this->hasOne(Review::class, 've_id');
+        return $this->hasOne(Review::class, 'veId', 'id');
     }
-
-
 }

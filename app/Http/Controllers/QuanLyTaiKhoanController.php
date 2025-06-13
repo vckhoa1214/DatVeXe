@@ -107,25 +107,26 @@ class QuanLyTaiKhoanController extends Controller
     {
         $id = $request->id;
 
-        // Tìm tài khoản theo ID
         $taiKhoan = TaiKhoan::findOrFail($id);
 
-        // Xóa các vé đã đặt liên quan tới tài khoản này
+        // Bỏ liên kết với các NhaXe (set managerId về null)
+        NhaXe::where('managerId', $id)->update(['managerId' => null]);
+
+        // Xóa các vé đã đặt
         foreach ($taiKhoan->veDaDat as $veDaDat) {
-            $veDaDat->delete();  // Xóa vé đã đặt
+            $veDaDat->delete();
         }
 
-        // Xóa các đánh giá (reviews) liên quan tới tài khoản này
+        // Xóa các đánh giá
         foreach ($taiKhoan->reviews as $review) {
-            $review->delete();  // Xóa review
+            $review->delete();
         }
 
         // Cuối cùng, xóa tài khoản
         $taiKhoan->delete();
 
-        return redirect()->back()->with('success', 'Tài khoản và tất cả các vé, đánh giá liên quan đã được xóa!');
+        return redirect()->back()->with('success', 'Tài khoản và dữ liệu liên quan đã được xóa!');
     }
-
 
 
     public function themTaiKhoan()
